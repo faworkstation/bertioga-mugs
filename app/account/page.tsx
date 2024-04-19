@@ -1,19 +1,26 @@
 "use client";
 
-import { UserLoginForm } from "@/components/forms/UserLoginForm";
-import { UserRegisterForm } from "@/components/forms/UserRegisterForm";
+import { LogoutButton } from "@/components/buttons/LogoutButton";
+import { BeatLoading } from "@/components/loadings/BeatLoading";
+import { Button, Flex } from "@tremor/react";
 import { useState } from "react";
 
 export default function AccountPage() {
-      const [showForm, setShowForm] = useState<number>(1)
+      const [isLogoutProccessing, setIsLogouProccessing] = useState<boolean>(false);
 
-      if (showForm === 1) {
-            return (
-                  <UserLoginForm showForm={() => setShowForm(2)} />
-            );
-      } else {
-            return (
-                  <UserRegisterForm showForm={() => setShowForm(1)} />
-            );
-      };
-};
+      return (
+            <Flex className="p-4">
+                  <h1>Account Page</h1>
+
+                  {!isLogoutProccessing ? (
+                        <LogoutButton>
+                              <Button type="button" variant="secondary" onClick={() => setIsLogouProccessing(true)}>
+                                    Sair
+                              </Button>
+                        </LogoutButton>
+                  ) : (
+                        <BeatLoading />
+                  )}
+            </Flex>
+      )
+}

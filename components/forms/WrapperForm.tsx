@@ -15,7 +15,7 @@ export const WrapperForm = ({
       children
 }: Props) => {
       return (
-            <Flex className="flex-col justify-center space-y-4 p-2">
+            <Flex className="flex-col justify-center space-y-4 p-2 mt-4">
                   <AnimBottomToTop>
                         <div className="p-2 text-center max-w-lg flex flex-col items-center justify-center space-y-4">
                               <Subtitle className='font-bold text-slate-900' style={{ textTransform: 'uppercase' }}>
