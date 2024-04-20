@@ -20,7 +20,7 @@ export const AnimBottomToTop = ({ children, delay = 0 }: AnimBottomToTop) => {
       }, [controls, delay]);
 
       return (
-            <motion.div initial={{ y: 20, opacity: 0 }} animate={controls} >
+            <motion.div initial={{ y: 20, opacity: 0 }} animate={controls}>
                   {children}
             </motion.div>
       );

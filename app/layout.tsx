@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { SessionProvider } from "next-auth/react";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/Header";
 import { auth } from "@/auth";
+import { Header } from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 

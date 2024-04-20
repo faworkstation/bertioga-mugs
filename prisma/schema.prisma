@@ -46,6 +46,7 @@ model User {
   twoFactorConfirmation TwoFactorConfirmation?
 
   accounts Account[]
+  Product  Product[]
 }
 
 model VerificationToken {
@@ -82,4 +83,15 @@ model TwoFactorConfirmation {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId])
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  price       String
+  name        String
+  date        DateTime
+  description String
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
 }

@@ -14,3 +14,41 @@
 ::-webkit-scrollbar-thumb {
   @apply bg-slate-400 rounded-full
 }
+
+.modal {
+  height: 100vh;
+  padding-inline: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  overflow: auto;
+  scrollbar-width: none;
+  bottom: 0px;
+  left: 0px;
+  z-index: 20;
+}
+
+.closeButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 5px;
+  background-color: rgb(148 163 184);
+  border-radius: 8px;
+  border-style: solid;
+  border-color: rgb(100 116 139);
+  color: #FFF;
+}
+
+.textResponsive {
+  @apply sr-only md:not-sr-only;
+}
+
+.defaultInput {
+  width: 600px;
+  margin-top: 10px;
+}
+
+@media only screen and (max-width: 600px) {
+  .defaultInput {
+    width: 300px;
+  }
+}
