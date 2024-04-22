@@ -13,11 +13,7 @@ import { SyncLoading } from "@/components/loadings/SyncLoading";
 import { registerUser } from "@/database/create/register-users";
 import Link from "next/link";
 
-type Props = {
-      showForm: () => void;
-}
-
-export const UserRegisterForm = ({ showForm }: Props) => {
+export const UserRegisterForm = () => {
       const [error, setError] = useState<string>("");
       const [success, setSuccess] = useState<string>("");
 
