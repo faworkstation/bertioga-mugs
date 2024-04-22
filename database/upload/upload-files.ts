@@ -6,7 +6,7 @@ import { Buffer } from "buffer";
 import sharp from "sharp";
 
 const region = process.env.AWS_REGION;
-const accessKeyId = process.env.AWS_ACCESS_KEY;
+const accessKeyId = process.env.AWS3_ACCESS_KEY;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 const bucketName = process.env.AWS_BUCKET_NAME;
 

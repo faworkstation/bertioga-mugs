@@ -179,7 +179,7 @@ export const ProductRegisterForm = ({
                                                             <h3 className="text-tremor-label font-bold text-slate-800">Fotos do Produto</h3>
                                                             <div className="flex flex-wrap items-center" style={{ gap: "10px" }}>
                                                                   {!!uploadedFiles?.length && uploadedFiles?.map((link, index) => (
-                                                                        <div className="relative">
+                                                                        <div className="relative" key={index}>
                                                                               <Button
                                                                                     type={"button"}
                                                                                     className={"deleteButton"}
@@ -190,7 +190,6 @@ export const ProductRegisterForm = ({
                                                                               />
 
                                                                               <Image
-                                                                                    key={index}
                                                                                     src={`${link}`}
                                                                                     alt={`Uploaded image ${index + 1}`}
                                                                                     width={80}
