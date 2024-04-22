@@ -49,6 +49,17 @@ model User {
   Product  Product[]
 }
 
+model Product {
+  id          String   @id @default(uuid())
+  price       String
+  name        String
+  images      String[]
+  description String
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+}
+
 model VerificationToken {
   id      String   @id @default(cuid())
   email   String
@@ -83,15 +94,4 @@ model TwoFactorConfirmation {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId])
-}
-
-model Product {
-  id          String   @id @default(uuid())
-  price       String
-  name        String
-  date        DateTime
-  description String
-
-  userId String?
-  user   User?   @relation(fields: [userId], references: [id])
 }

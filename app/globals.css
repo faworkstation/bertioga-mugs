@@ -30,25 +30,41 @@
   position: absolute;
   top: 5px;
   right: 5px;
+  background-color: transparent;
+  color: rgba(15, 23, 42, 0.8);
+}
+
+.deleteButton {
+  position: absolute;
+  top: -1px;
+  right: -1px;
   padding: 5px;
-  background-color: rgb(148 163 184);
-  border-radius: 8px;
+  background-color: white;
+  border-radius: 100%;
   border-style: solid;
   border-color: rgb(100 116 139);
-  color: #FFF;
+  color: red;
 }
 
 .textResponsive {
   @apply sr-only md:not-sr-only;
 }
 
-.defaultInput {
+.cardForm {
+  @apply transition-all duration-300;
   width: 600px;
-  margin-top: 10px;
+  padding: 15px;
 }
 
 @media only screen and (max-width: 600px) {
-  .defaultInput {
-    width: 300px;
+  .cardForm {
+    width: 500px;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .cardForm {
+    width: auto;
+    max-width: 420px;
   }
 }

@@ -9,14 +9,6 @@ export const UserRegisterSchema = z.object({
       password: z.string().min(6, { message: "Este Campo é obrigatório" }),
 });
 
-export const Produc = z.object({
-      firstName: z.string().min(1, { message: "Este Campo é obrigatório" }),
-      lastName: z.string().min(1, { message: "Este Campo é obrigatório" }),
-      email: z.string().email({ message: "Este Campo é obrigatório" }),
-      phone: z.string().optional(),
-      password: z.string().min(6, { message: "Este Campo é obrigatório" }),
-});
-
 export const LoginSchema = z.object({
       email: z.string().email({ message: "Este Campo é obrigatório" }),
       password: z.string().min(1, { message: "Este Campo é obrigatório" }),
@@ -63,6 +55,6 @@ export const SettingsSchema = z.object({
 export const ProductSchema = z.object({
       name: z.string().min(1, { message: "Este campo é obrigatório" }),
       price: z.string().min(1, { message: "Este campo é obrigatório" }),
-      date: z.date(),
+      images: z.array(z.string()).optional(),
       description: z.string().min(1, { message: "Este campo é obrigatório" }),
 });

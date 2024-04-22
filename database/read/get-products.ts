@@ -22,3 +22,13 @@ export const getProductById = async (id: string | undefined) => {
             return null;
       };
 };
+
+export const getProductByName = async (name: string | undefined) => {
+      try {
+            const product = await db.product.findFirst({ where: { name } });
+            return product;
+
+      } catch {
+            return null;
+      };
+};

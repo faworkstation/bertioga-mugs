@@ -1,12 +1,11 @@
 "use client";
 
-import { LogoutButton } from "@/components/buttons/LogoutButton";
 import { ProductRegisterForm } from "@/components/forms/ProductRegisterForm";
-import { BeatLoading } from "@/components/loadings/BeatLoading";
 import { SearchWithSelect } from "@/components/searches/SearchWithSelect";
 import { useProductData } from "@/hooks/use-product-data";
 import { Button, Card, Flex, SelectItem, Tab, TabGroup, TabList, TabPanel, TabPanels, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { useState } from "react";
+import { BsFillPlusCircleFill } from "react-icons/bs";
 import { FaPlus } from "react-icons/fa6";
 
 export default function AccountPage() {
@@ -17,19 +16,12 @@ export default function AccountPage() {
       return (
             <Flex className="p-4 relative">
                   <TabGroup>
-                        <Flex className="items-end">
-                              <TabList className="font-medium">
-                                    <Tab>Estoque</Tab>
-                                    <Tab>Pedidos</Tab>
-                                    <Tab>Config<span className="textResponsive">urações</span></Tab>
-                              </TabList>
-                              <Button onClick={() => setIsRegisterProductFormModalOpen(true)}>
-                                    <div className="flex items-center space-x-2">
-                                          <FaPlus size={20} />
-                                          <span className="textResponsive">Cadastrar Produto</span>
-                                    </div>
-                              </Button>
-                        </Flex>
+                        <TabList className="font-medium bg-gray-50 rounded-tremor-small" >
+                              <Tab>Estoque</Tab>
+                              <Tab>Pedidos</Tab>
+                              <Tab>Configurações</Tab>
+                        </TabList>
+
                         <TabPanels>
                               <TabPanel className="flex-col space-y-4   ">
                                     <div className="mt-4">
@@ -75,6 +67,13 @@ export default function AccountPage() {
                                                 </TableBody>
                                           </Table>
                                     </Card>
+
+                                    <Button onClick={() => setIsRegisterProductFormModalOpen(true)}>
+                                          <div className="flex items-center space-x-2">
+                                                <BsFillPlusCircleFill size={20} />
+                                                <span>Cadastrar Produto</span>
+                                          </div>
+                                    </Button>
                               </TabPanel>
                               <TabPanel>
                                     <p className="mt-4 leading-6 text-tremor-default text-tremor-content dark:text-dark-tremor-content">

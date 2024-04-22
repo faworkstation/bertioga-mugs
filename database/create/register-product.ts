@@ -6,13 +6,20 @@ import { UserRole } from "@prisma/client";
 import { ProductSchema } from "@/schemas";
 
 import { currentUser } from "@/hooks/use-server-side-user";
+import { getProductByName } from "../read/get-products";
 
 export const registerProduct = async (values: z.infer<typeof ProductSchema>) => {
       const validatedFields = ProductSchema.safeParse(values);
 
       if (!validatedFields.success) return { error: "Campos inválidos ou inexsitentes. Por favor, insira campos válidos." };
 
-      const { date, description, price, name } = validatedFields.data;
+      const { description, price, name, images } = validatedFields.data;
+
+      const existingProductName = await getProductByName(name);
+
+      if (existingProductName) {
+            return { error: `Já existe um produto cadastrado com este nome. Por favor, tente um nome diferente.` };
+      }
 
       const user = await currentUser();
 
@@ -20,7 +27,7 @@ export const registerProduct = async (values: z.infer<typeof ProductSchema>) => 
             await db.product.create({
                   data: {
                         price,
-                        date,
+                        images: images,
                         name,
                         description,
                         userId: user.id,

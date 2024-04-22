@@ -4,18 +4,27 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState, useTransition } from "react"
-import { FaX, FaWrench } from "react-icons/fa6";
-import { ptBR } from "date-fns/locale";
-
+import { BsFillBoxSeamFill, BsTrash, BsUpload, BsXCircle } from "react-icons/bs";
 import { ProductSchema } from "@/schemas";
+import Image from "next/image";
 
-import { Button, Callout, Card, DatePicker, Divider, Flex, TextInput, Textarea, } from "@tremor/react";
+import {
+      Button,
+      Callout,
+      Card,
+      Divider,
+      Flex,
+      TextInput,
+      Textarea
+} from "@tremor/react";
+
 import { AnimBottomToTop } from "@/components/animations/AnimBottomToTop"
+import { BounceLoading } from "@/components/loadings/BounceLoading";
 import { HeaderForm } from "@/components/forms/HeaderForm";
 import { SyncLoading } from "@/components/loadings/SyncLoading"
 
 import { registerProduct } from "@/database/create/register-product";
-import { CiMug1 } from "react-icons/ci";
+import useUploadedFiles from "@/hooks/use-uploaded-files";
 
 export const ProductRegisterForm = ({
       isOpen,
@@ -61,12 +70,31 @@ export const ProductRegisterForm = ({
 
             // Define o valor no formulário
             form.setValue(inputName, formattedValue);
-      }
+      };
+
+      const {
+            uploadedFiles,
+            isUploadingFiles,
+            errorUploadFiles,
+            setErrorUploadFiles,
+            handleUploadFiles,
+            setUploadedFiles,
+            removeFile
+      } = useUploadedFiles();
+
 
       const onSubmit = (values: z.infer<typeof ProductSchema>) => {
             setIsPending(true);
 
             startTransition(() => {
+                  if (uploadedFiles.length === 0) {
+                        setIsPending(false);
+                        setError("Por favor, insira fotos do produto. Clique no botão upload para adicionar fotos.");
+                        return;
+                  }
+
+                  values.images = uploadedFiles;
+
                   registerProduct(values)
                         .then((data) => {
                               if (data?.error) {
@@ -95,69 +123,128 @@ export const ProductRegisterForm = ({
             <Flex className={`${isOpen ? "fixed" : "hidden"} modal`} >
                   <Flex className={"w-full h-full items-center justify-center"}>
                         <AnimBottomToTop>
-                              <Card className={"p-4"}>
+                              <Card className={"cardForm"}>
                                     <HeaderForm
-                                          icon={CiMug1}
-                                          title={"Cadastro de Canecas"}
-                                          description={!success ? ("Preencha o formulário abaixo para cadastrar uma caneca") : ("")}
+                                          icon={BsFillBoxSeamFill}
+                                          title={"Cadastro de Produto"}
+                                          description={!success ? ("Preencha o formulário abaixo para cadastrar um produto") : ("")}
                                     />
 
+                                    <Divider className="mt-2" style={{ marginBlock: "10px" }} />
+
                                     <form
-                                          className={"w-full flex flex-col items-center justify-center mt-4"}
+                                          className={"w-full flex flex-col items-center justify-center"}
                                           onSubmit={form.handleSubmit(onSubmit)}
                                           onChange={cleanMessages}
                                     >
                                           {!success && (
                                                 <Flex
-                                                      className={"flex-col overflow-auto pb-2 space-y-2 items-start"}
+                                                      className={"flex-col overflow-auto pb-2 space-y-4 items-start"}
                                                       style={{
                                                             height: "auto",
-                                                            maxHeight: "350px",
+                                                            maxHeight: "400px",
                                                             scrollbarWidth: "none",
                                                       }}
                                                 >
-                                                      <TextInput
-                                                            className="defaultInput"
-                                                            type={"text"}
-                                                            name={"name"}
-                                                            placeholder={"Nome da Caneca"}
-                                                            onChange={(e) => form.setValue("name", e.target.value)}
-                                                            error={form.formState.errors.name ? (true) : (false)}
-                                                            errorMessage={"Este campo é obrigatório"}
-                                                            disabled={isPending}
-                                                            autoComplete={"off"}
-                                                      />
-                                                      <TextInput
-                                                            className="defaultInput"
-                                                            type={"text"}
-                                                            name={"price"}
-                                                            placeholder={"Valor de venda"}
-                                                            onChange={handlePriceChange('price')}
-                                                            error={form.formState.errors.price ? (true) : (false)}
-                                                            errorMessage={"Este campo é obrigatório"}
-                                                            disabled={isPending}
-                                                      />
-                                                      <DatePicker
-                                                            className="defaultInput"
-                                                            locale={ptBR}
-                                                            displayFormat={"dd/MM/yyyy"}
-                                                            disabled={isPending}
-                                                            placeholder={"Data de Fabricação"}
-                                                            onValueChange={(selectedDate: any | null) =>
-                                                                  selectedDate && form.setValue("date", selectedDate)
-                                                            }
-                                                      />
+                                                      <div className="w-full space-y-1">
+                                                            <h3 className="text-tremor-label font-bold text-slate-800">Digite o Nome do Produto</h3>
+                                                            <TextInput
+                                                                  className="defaultInput"
+                                                                  type={"text"}
+                                                                  name={"name"}
+                                                                  placeholder={"Ex: Produto X"}
+                                                                  onChange={(e) => form.setValue("name", e.target.value)}
+                                                                  error={form.formState.errors.name ? (true) : (false)}
+                                                                  errorMessage={"Este campo é obrigatório"}
+                                                                  disabled={isUploadingFiles || isPending}
+                                                                  autoComplete={"off"}
+                                                            />
+                                                      </div>
 
-                                                      <Textarea
-                                                            className="defaultInput"
-                                                            name={"description"}
-                                                            placeholder={"Descrição do produto..."}
-                                                            onChange={(e) => form.setValue("description", e.target.value)}
-                                                            error={form.formState.errors.description ? (true) : (false)}
-                                                            errorMessage={"Este campo é obrigatório"}
-                                                            disabled={isPending}
-                                                            rows={6}
-                                                      />
+                                                      <div className="w-full space-y-1">
+                                                            <h3 className="text-tremor-label font-bold text-slate-800">Insira o Valor de Venda</h3>
+                                                            <TextInput
+                                                                  className="defaultInput"
+                                                                  type={"text"}
+                                                                  name={"price"}
+                                                                  placeholder={"R$ 0,00"}
+                                                                  onChange={handlePriceChange('price')}
+                                                                  error={form.formState.errors.price ? (true) : (false)}
+                                                                  errorMessage={"Este campo é obrigatório"}
+                                                                  disabled={isUploadingFiles || isPending}
+                                                            />
+                                                      </div>
+
+                                                      <div className="w-full space-y-1">
+                                                            <h3 className="text-tremor-label font-bold text-slate-800">Fotos do Produto</h3>
+                                                            <div className="flex flex-wrap items-center" style={{ gap: "10px" }}>
+                                                                  {!!uploadedFiles?.length && uploadedFiles?.map((link, index) => (
+                                                                        <div className="relative">
+                                                                              <Button
+                                                                                    type={"button"}
+                                                                                    className={"deleteButton"}
+                                                                                    icon={BsTrash}
+                                                                                    variant={"light"}
+                                                                                    size={"xs"}
+                                                                                    onClick={() => removeFile(index)}
+                                                                              />
+
+                                                                              <Image
+                                                                                    key={index}
+                                                                                    src={`${link}`}
+                                                                                    alt={`Uploaded image ${index + 1}`}
+                                                                                    width={80}
+                                                                                    height={80}
+                                                                                    className="rounded-tremor-default"
+                                                                              />
+                                                                        </div>
+                                                                  ))}
+
+                                                                  {isUploadingFiles && (
+                                                                        <div className="h-24 flex items-center">
+                                                                              <BounceLoading />
+                                                                        </div>
+                                                                  )}
+
+                                                                  <label
+                                                                        className="border-2 rounded-tremor-default cursor-pointer text-center flex flex-col items-center justify-center text-sm gap-1 text-slate-800 bg-slate-200 border-slate-300 p-2"
+                                                                        style={{ widows: '60px', height: '60px' }}
+                                                                  >
+                                                                        <BsUpload size={20} className="text-slate-600" />
+                                                                        <span> Upload </span>
+                                                                        <input
+                                                                              className="hidden"
+                                                                              type="file"
+                                                                              id="file"
+                                                                              name="file"
+                                                                              accept="images/*"
+                                                                              multiple
+                                                                              onChange={handleUploadFiles}
+                                                                        />
+                                                                  </label>
+
+                                                                  {!uploadedFiles?.length && !isUploadingFiles && (
+                                                                        <h3 className="text-tremor-label">
+                                                                              Clique no botão upload para adicionar fotos
+                                                                        </h3>
+                                                                  )}
+                                                            </div>
+                                                      </div>
+
+                                                      <div className="w-full space-y-1">
+                                                            <h3 className="text-tremor-label font-bold text-slate-800">Descreva o produto</h3>
+                                                            <Textarea
+                                                                  className="defaultInput"
+                                                                  name={"description"}
+                                                                  placeholder={"Digite uma descrição curta e informativa do produto..."}
+                                                                  onChange={(e) => form.setValue("description", e.target.value)}
+                                                                  error={form.formState.errors.description ? (true) : (false)}
+                                                                  errorMessage={"Este campo é obrigatório"}
+                                                                  disabled={isUploadingFiles || isPending}
+                                                                  rows={4}
+                                                                  maxLength={124}
+                                                            />
+                                                      </div>
                                                 </Flex>
                                           )}
 
@@ -166,19 +253,41 @@ export const ProductRegisterForm = ({
                                           <Flex flexDirection="col" >
                                                 {isPending && !success ? (
                                                       <SyncLoading />
-                                                ) : error ? (
-                                                      <Flex className="w-full flex-col space-y-4">
+                                                ) : error || form.formState.errors.description ? (
+                                                      <Flex className="w-full flex-col space-y-1">
                                                             <AnimBottomToTop>
                                                                   <Callout
                                                                         className={"w-full"}
-                                                                        title={`${error}`}
+                                                                        title={error ? (`${error}`) : form.formState.errors ? ("Por favor, preencha todos os campos obrigatórios.") : ""}
                                                                         color={"red"}
                                                                   />
                                                             </AnimBottomToTop>
 
                                                             <Button
+                                                                  className="w-full"
                                                                   type={"button"}
-                                                                  onClick={onClose}
+                                                                  onClick={() => {
+                                                                        setError("")
+                                                                        form.clearErrors();
+                                                                  }}
+                                                            >
+                                                                  OK
+                                                            </Button>
+                                                      </Flex>
+                                                ) : errorUploadFiles ? (
+                                                      <Flex className="w-full flex-col space-y-1">
+                                                            <AnimBottomToTop>
+                                                                  <Callout
+                                                                        className={"w-full"}
+                                                                        title={`${errorUploadFiles}`}
+                                                                        color={"red"}
+                                                                  />
+                                                            </AnimBottomToTop>
+
+                                                            <Button
+                                                                  className="w-full"
+                                                                  type={"button"}
+                                                                  onClick={() => setErrorUploadFiles("")}
                                                             >
                                                                   OK
                                                             </Button>
@@ -193,30 +302,50 @@ export const ProductRegisterForm = ({
                                                                   />
                                                             </AnimBottomToTop>
 
-                                                            <Button
-                                                                  className={"w-full"}
-                                                                  type={"button"}
-                                                                  onClick={onClose}
-                                                            >
-                                                                  OK
-                                                            </Button>
+                                                            <Flex className="justify-start space-x-2">
+                                                                  <Button
+                                                                        type={"button"}
+                                                                        onClick={() => {
+                                                                              setSuccess("")
+                                                                              setUploadedFiles([]);
+                                                                        }}
+                                                                  >
+                                                                        Cadastrar Novo Produto
+                                                                  </Button>
+                                                                  <Button
+                                                                        type={"button"}
+                                                                        variant="secondary"
+                                                                        onClick={onClose}
+                                                                  >
+                                                                        Fechar
+                                                                  </Button>
+                                                            </Flex>
                                                       </Flex>
                                                 ) : (
-                                                      <Button
-                                                            className={"w-full"}
-                                                            type={"submit"}
-                                                            disabled={isPending}
-                                                      >
-                                                            Salvar Cadastro
-                                                      </Button>
+                                                      <Flex className="justify-start space-x-2">
+                                                            <Button
+                                                                  type={"submit"}
+                                                                  disabled={isUploadingFiles || isPending}
+                                                            >
+                                                                  Salvar Cadastro
+                                                            </Button>
+                                                            <Button
+                                                                  type={"button"}
+                                                                  variant="secondary"
+                                                                  onClick={onClose}
+                                                                  disabled={isUploadingFiles || isPending}
+                                                            >
+                                                                  Cancelar
+                                                            </Button>
+                                                      </Flex>
                                                 )}
                                           </Flex>
                                     </form>
 
-                                    < Button
-                                          icon={FaX}
+                                    <Button
+                                          icon={BsXCircle}
                                           variant={"light"}
-                                          size={"xs"}
+                                          size="lg"
                                           className={"closeButton hover:text-white"}
                                           onClick={onClose}
                                     />
