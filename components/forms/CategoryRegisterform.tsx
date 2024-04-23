@@ -4,7 +4,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState, useTransition } from "react"
-import { BsFillLayersFill, BsXCircle } from "react-icons/bs";
+import { BsFillLayersFill, BsTrashFill, BsXCircle } from "react-icons/bs";
 import { CategorySchema } from "@/schemas";
 
 import {
@@ -25,6 +25,11 @@ import { SyncLoading } from "@/components/loadings/SyncLoading"
 import { useCategoryData } from "@/hooks/use-category-data";
 import { registerCategory } from "@/database/create/register-category";
 
+interface CategoryProperty {
+      name: string;
+      values: string;
+}
+
 export const CategoryRegisterForm = ({
       isOpen,
       onClose,
@@ -32,9 +37,9 @@ export const CategoryRegisterForm = ({
       isOpen: boolean
       onClose: () => void
 }) => {
+      const [properties, setProperties] = useState<CategoryProperty[] | []>([]);
       const [success, setSuccess] = useState<string>("");
       const [error, setError] = useState<string>("");
-
       const [isPending, setIsPending] = useState<boolean>(false);
 
       const [transitioning, startTransition] = useTransition();
@@ -46,9 +51,10 @@ export const CategoryRegisterForm = ({
 
       const { categories } = useCategoryData();
 
-
       const onSubmit = (values: z.infer<typeof CategorySchema>) => {
             setIsPending(true);
+            
+            values.properties = properties; 
 
             startTransition(() => {
                   registerCategory(values)
@@ -73,6 +79,32 @@ export const CategoryRegisterForm = ({
             form.clearErrors();
             setSuccess("");
             setError("");
+      };
+
+      const addProperty = () => {
+            setProperties(prev => {
+                  return [...prev, { name: '', values: '' }];
+            })
+      }
+
+      const handlePropertyNameChange = (index: number, newName: string) => {
+            setProperties((prev) => {
+                  const updatedProperties = [...prev];
+                  updatedProperties[index].name = newName;
+                  return updatedProperties;
+            });
+      };
+
+      const handlePropertyValuesChange = (index: number, newValues: string) => {
+            setProperties((prev) => {
+                  const updatedProperties = [...prev];
+                  updatedProperties[index].values = newValues;
+                  return updatedProperties;
+            });
+      };
+
+      const removeProperty = (indexToRemove: number) => {
+            setProperties((prev) => prev.filter((_, index) => index !== indexToRemove));
       };
 
       return (
@@ -128,6 +160,44 @@ export const CategoryRegisterForm = ({
                                                                               </SelectItem>
                                                                         ))}
                                                             </Select>
+                                                      </div>
+
+                                                      <div className="w-full space-y-1">
+                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Propriedades</h3>
+                                                            {properties.length > 0 && properties.map((property, index) => (
+                                                                  <Flex className="items-start space-x-2" key={index}>
+                                                                        <Flex className="sm:flex-row flex-col" style={{ gap: '5px' }}>
+                                                                              <TextInput
+                                                                                    className="max-w-sm"
+                                                                                    type="text"
+                                                                                    value={property.name}
+                                                                                    onChange={e => handlePropertyNameChange(index, e.target.value)}
+                                                                                    placeholder="Nome da propriedade (ex: cor)"
+                                                                              />
+                                                                              <TextInput
+                                                                                    className="max-w-sm"
+                                                                                    type="text"
+                                                                                    value={property.values}
+                                                                                    onChange={e => handlePropertyValuesChange(index, e.target.value)}
+                                                                                    placeholder="Valores separados por vírgula"
+                                                                              />
+                                                                        </Flex>
+                                                                        <Button
+                                                                              icon={BsTrashFill}
+                                                                              type="button"
+                                                                              className="text-white bg-slate-400 hover:bg-slate-500 border-slate-500 transition-all duration-300 hover:border-slate-500"
+                                                                              onClick={() => removeProperty(index)}
+                                                                        />
+                                                                  </Flex>
+                                                            ))}
+                                                            <Button
+                                                                  onClick={addProperty}
+                                                                  type="button"
+                                                                  className="p-2"
+                                                                  variant="light"
+                                                            >
+                                                                  + Adicione propriedades
+                                                            </Button>
                                                       </div>
                                                 </Flex>
                                           )}
@@ -187,22 +257,14 @@ export const CategoryRegisterForm = ({
                                                             </Flex>
                                                       </Flex>
                                                 ) : (
-                                                      <Flex className="justify-start space-x-2">
-                                                            <Button
-                                                                  type={"submit"}
-                                                                  disabled={isPending}
-                                                            >
-                                                                  Salvar Registro
-                                                            </Button>
-                                                            <Button
-                                                                  type={"button"}
-                                                                  variant="secondary"
-                                                                  onClick={onClose}
-                                                                  disabled={isPending}
-                                                            >
-                                                                  Cancelar
-                                                            </Button>
-                                                      </Flex>
+                                                      <Button
+                                                            className="w-full"
+                                                            type={"submit"}
+                                                            disabled={isPending}
+                                                      >
+                                                            Salvar Registro
+                                                      </Button>
+
                                                 )}
                                           </Flex>
                                     </form>

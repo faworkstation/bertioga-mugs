@@ -58,7 +58,15 @@ export const ProductSchema = z.object({
       images: z.array(z.string()).optional(),
       description: z.string().min(1, { message: "Este campo é obrigatório" }),
 });
+
+// Definição do schema para propriedades individuais
+export const CategoryPropertySchema = z.object({
+      name: z.string().min(1, { message: "O nome da propriedade é obrigatório" }),
+      values: z.string().min(1, { message: "Os valores da propriedade são obrigatórios" }),
+});
+
 export const CategorySchema = z.object({
       name: z.string().min(1, { message: "Este campo é obrigatório" }),
       parent: z.string().optional(),
+      properties: z.array(CategoryPropertySchema).optional(),
 });

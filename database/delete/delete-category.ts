@@ -6,7 +6,12 @@ export const deleteCategory = async (categoryId: string): Promise<{
       success: string,
       error: string
 }> => {
-      try {
+      try { 
+            // Primeiro, remova as associações do CategoryProperty relacionadas à categoria
+            await db.categoryProperty.deleteMany({
+                where: { categoryId },
+            });
+
             const response = await db.category.delete({
                   where: { id: categoryId },
             });
