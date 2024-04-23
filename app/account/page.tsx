@@ -1,21 +1,43 @@
 "use client";
 
+import { CategoryEditForm } from "@/components/forms/CategoryEditform";
 import { CategoryRegisterForm } from "@/components/forms/CategoryRegisterform";
+import { ProductEditForm } from "@/components/forms/ProductEditForm";
 import { ProductRegisterForm } from "@/components/forms/ProductRegisterForm";
 import { SearchWithSelect } from "@/components/searches/SearchWithSelect";
 import { useCategoryData } from "@/hooks/use-category-data";
 import { useProductData } from "@/hooks/use-product-data";
 import { Button, Card, Flex, SelectItem, Subtitle, Tab, TabGroup, TabList, TabPanel, TabPanels, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { useState } from "react";
-import { BsBox2Fill, BsFillBoxSeamFill, BsFillClipboardCheckFill, BsFillLayersFill, BsFillPlusCircleFill, BsListUl, BsPencilSquare, BsTrashFill } from "react-icons/bs";
-import { FaPlus } from "react-icons/fa6";
+import { BsFillBoxSeamFill, BsFillClipboardCheckFill, BsFillLayersFill, BsFillPlusCircleFill, BsListUl, BsPencilSquare, BsTrashFill } from "react-icons/bs";
+
 
 export default function AccountPage() {
       const [isRegisterProductFormModalOpen, setIsRegisterProductFormModalOpen] = useState<boolean>(false);
+      const [isEditProductFormModalOpen, setIsEditProductFormModalOpen] = useState<boolean>(false);
+      const [selectedProductId, setSelectedProductId] = useState<string>("");
+
       const [isRegisterCategoryFormModalOpen, setIsRegisterCategoryFormModalOpen] = useState<boolean>(false);
+      const [isEditCategoryFormModalOpen, setIsEditCategoryFormModalOpen] = useState<boolean>(false);
+      const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
 
       const { products } = useProductData();
+
+      const productDetails = products.find(product => product.id === selectedProductId);
+
+      const handleOpenproductDetailsModal = async (id: string) => {
+            setSelectedProductId(id);
+            setIsEditProductFormModalOpen(true);
+      }
+
       const { categories } = useCategoryData();
+
+      const categoryDetails = categories.find(category => category.id === selectedCategoryId);
+
+      const handleOpenCategoryDetailsModal = async (id: string) => {
+            setSelectedCategoryId(id);
+            setIsEditCategoryFormModalOpen(true);
+      }
 
       return (
             <Flex className="p-4 relative">
@@ -81,7 +103,12 @@ export default function AccountPage() {
                                                                                     <TableCell>{product.price}</TableCell>
                                                                                     <TableCell>
                                                                                           <Flex className="justify-start space-x-2">
-                                                                                                <Button icon={BsPencilSquare} size={"md"} className="transition-all duration-300">
+                                                                                                <Button
+                                                                                                      icon={BsPencilSquare}
+                                                                                                      size={"md"}
+                                                                                                      className="transition-all duration-300"
+                                                                                                      onClick={() => handleOpenproductDetailsModal(product.id)}
+                                                                                                >
                                                                                                       Editar
                                                                                                 </Button>
                                                                                                 <Button icon={BsTrashFill} size={"md"} className="text-white bg-rose-400 hover:bg-rose-500 border-rose-500 transition-all duration-300">
@@ -110,6 +137,7 @@ export default function AccountPage() {
                                           Diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat. Lorem ipsum dolor sit amet, consetetur sadipscing elitr.
                                     </p>
                               </TabPanel>
+
                               <TabPanel className="flex-col space-y-4   ">
                                     <div className="mt-4">
                                           <SearchWithSelect
@@ -153,7 +181,12 @@ export default function AccountPage() {
                                                                                     <TableCell>{category.parent}</TableCell>
                                                                                     <TableCell>
                                                                                           <Flex className="justify-start space-x-2">
-                                                                                                <Button icon={BsPencilSquare} size={"md"} className="transition-all duration-300">
+                                                                                                <Button
+                                                                                                      icon={BsPencilSquare}
+                                                                                                      size={"md"}
+                                                                                                      className="transition-all duration-300"
+                                                                                                      onClick={() => handleOpenCategoryDetailsModal(category.id)}
+                                                                                                >
                                                                                                       Editar
                                                                                                 </Button>
                                                                                                 <Button icon={BsTrashFill} size={"md"} className="text-white bg-rose-400 hover:bg-rose-500 border-rose-500 transition-all duration-300">
@@ -180,12 +213,35 @@ export default function AccountPage() {
                         </TabPanels>
                   </TabGroup>
 
+                  {isRegisterProductFormModalOpen && (
+                        <ProductRegisterForm
+                              isOpen={isRegisterProductFormModalOpen}
+                              onClose={() => setIsRegisterProductFormModalOpen(false)}
+                        />
+                  )}
+
                   {isRegisterCategoryFormModalOpen && (
                         <CategoryRegisterForm
                               isOpen={isRegisterCategoryFormModalOpen}
                               onClose={() => setIsRegisterCategoryFormModalOpen(false)}
                         />
                   )}
+
+                  {isEditCategoryFormModalOpen && categoryDetails && (
+                        <CategoryEditForm
+                              category={categoryDetails}
+                              isOpen={isEditCategoryFormModalOpen}
+                              onClose={() => setIsEditCategoryFormModalOpen(false)}
+                        />
+                  )}
+
+                  {isEditProductFormModalOpen && productDetails && (
+                        <ProductEditForm
+                              product={productDetails}
+                              isOpen={isEditProductFormModalOpen}
+                              onClose={() => setIsEditProductFormModalOpen(false)}
+                        />
+                  )}
             </Flex>
-      )
-}
+      );
+};

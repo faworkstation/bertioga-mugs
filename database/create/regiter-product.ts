@@ -34,7 +34,7 @@ export const registerProduct = async (values: z.infer<typeof ProductSchema>) => 
                   },
             });
 
-            return { success: `Produto Registrado com Sucesso.`, };
+            return { success: `Produto Cadastrado com Sucesso.`, };
       } else {
             return { error: `Você não tem permissão para executar esta ação!` };
       };

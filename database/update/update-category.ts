@@ -8,7 +8,7 @@ import { CategorySchema } from "@/schemas";
 import { currentUser } from "@/hooks/use-server-side-user";
 import { getCategoryByName } from "../read/get-categories";
 
-export const registerCategory = async (values: z.infer<typeof CategorySchema>) => {
+export const updateCategory = async (values: z.infer<typeof CategorySchema>, categoryId: string) => {
       const validatedFields = CategorySchema.safeParse(values);
 
       if (!validatedFields.success) return { error: "Campos inválidos ou inexsitentes. Por favor, insira campos válidos." };
@@ -17,14 +17,15 @@ export const registerCategory = async (values: z.infer<typeof CategorySchema>) =
 
       const existingCategoryName = await getCategoryByName(name);
 
-      if (existingCategoryName) {
+      if (existingCategoryName && existingCategoryName.id !== categoryId) {
             return { error: `Já existe uma categoria registrada com este nome. Por favor, tente um nome diferente.` };
       }
 
       const user = await currentUser();
 
       if (user && user.role === UserRole.ADMIN) {
-            await db.category.create({
+            await db.category.update({
+                  where: { id: categoryId },
                   data: {
                         name,
                         parent,
@@ -32,7 +33,7 @@ export const registerCategory = async (values: z.infer<typeof CategorySchema>) =
                   },
             });
 
-            return { success: `Categoria Registrada com Sucesso.`, };
+            return { success: `Categoria Atualizada com Sucesso.`, };
       } else {
             return { error: `Você não tem permissão para executar esta ação!` };
       };

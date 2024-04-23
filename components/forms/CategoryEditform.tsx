@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState, useTransition } from "react"
+import { useEffect, useState, useTransition } from "react"
 import { BsFillLayersFill, BsXCircle } from "react-icons/bs";
 import { CategorySchema } from "@/schemas";
 
@@ -23,35 +23,54 @@ import { HeaderForm } from "@/components/forms/HeaderForm";
 import { SyncLoading } from "@/components/loadings/SyncLoading"
 
 import { useCategoryData } from "@/hooks/use-category-data";
-import { registerCategory } from "@/database/create/register-category";
+import { Category } from "@prisma/client";
+import { updateCategory } from "@/database/update/update-category";
 
-export const CategoryRegisterForm = ({
+export const CategoryEditForm = ({
       isOpen,
+      category,
       onClose,
 }: {
       isOpen: boolean
+      category: Category
       onClose: () => void
 }) => {
+      const initialData = {
+            id: category.id || "",
+            name: category.name || "",
+            parent: category.parent || ""
+      };
+
       const [success, setSuccess] = useState<string>("");
       const [error, setError] = useState<string>("");
-
+      const [isFormModified, setIsFormModified] = useState<boolean>(false);
       const [isPending, setIsPending] = useState<boolean>(false);
 
       const [transitioning, startTransition] = useTransition();
 
       const form = useForm<z.infer<typeof CategorySchema>>({
             resolver: zodResolver(CategorySchema),
-            defaultValues: {},
+            defaultValues: { ...initialData },
       });
 
-      const { categories } = useCategoryData();
+      const parentValue = form.watch("parent");
+      const nameValue = form.watch("name");
 
+      useEffect(() => {
+            const isModified =
+                  nameValue !== initialData.name ||
+                  parentValue !== initialData.parent;
+
+            setIsFormModified(isModified);
+      }, [parentValue, nameValue, form, initialData]);
+
+      const { categories } = useCategoryData();
 
       const onSubmit = (values: z.infer<typeof CategorySchema>) => {
             setIsPending(true);
 
             startTransition(() => {
-                  registerCategory(values)
+                  updateCategory(values, initialData.id)
                         .then((data) => {
                               if (data?.error) {
                                     setError(data.error);
@@ -82,8 +101,8 @@ export const CategoryRegisterForm = ({
                               <Card className={"cardForm"}>
                                     <HeaderForm
                                           icon={BsFillLayersFill}
-                                          title={"Registro de Categoria"}
-                                          description={!success ? ("Preencha o formulário abaixo para registrar uma categoria") : ("")}
+                                          title={"Editar Categoria"}
+                                          description={!success ? ("Altere as informações do formulário abaixo para editar uma categoria") : ("")}
                                     />
 
                                     <Divider className="mt-2" style={{ marginBlock: "10px" }} />
@@ -103,11 +122,13 @@ export const CategoryRegisterForm = ({
                                                                   type={"text"}
                                                                   name={"name"}
                                                                   placeholder={"Ex: Categoria X"}
-                                                                  onChange={(e) => form.setValue("name", e.target.value)}
+                                                                  onChange={(e) => {
+                                                                        form.setValue("name", e.target.value)
+                                                                        form.trigger("name")
+                                                                  }}
                                                                   error={form.formState.errors.name ? (true) : (false)}
-                                                                  errorMessage={"Este campo é obrigatório"}
-                                                                  disabled={isPending}
-                                                                  autoComplete={"off"}
+                                                                  errorMessage={form.formState.errors.name?.message}
+                                                                  defaultValue={initialData.name}
                                                             />
                                                       </div>
                                                       <div className="w-full space-y-1">
@@ -115,8 +136,12 @@ export const CategoryRegisterForm = ({
                                                             <Select
                                                                   className="border border-slate-300 rounded-tremor-default"
                                                                   name={"parent"}
-                                                                  onValueChange={(value: string) => form.setValue("parent", value)}
-                                                                  placeholder="Clique para selecionar"
+                                                                  onValueChange={(value: string) => {
+                                                                        form.setValue("parent", value);
+                                                                        form.trigger("parent");
+                                                                  }}
+                                                                  placeholder={initialData.parent}
+                                                                  defaultValue={initialData.parent}
                                                             >
                                                                   {categories.length > 0
                                                                         && categories.map(category => (
@@ -175,7 +200,7 @@ export const CategoryRegisterForm = ({
                                                                               setSuccess("")
                                                                         }}
                                                                   >
-                                                                        Registrar Nova Categoria
+                                                                        Editar Novamente
                                                                   </Button>
                                                                   <Button
                                                                         type={"button"}
@@ -190,15 +215,15 @@ export const CategoryRegisterForm = ({
                                                       <Flex className="justify-start space-x-2">
                                                             <Button
                                                                   type={"submit"}
-                                                                  disabled={isPending}
+                                                                  disabled={isPending || !isFormModified}
                                                             >
-                                                                  Salvar Registro
+                                                                  Salvar Edição
                                                             </Button>
                                                             <Button
                                                                   type={"button"}
                                                                   variant="secondary"
                                                                   onClick={onClose}
-                                                                  disabled={isPending}
+                                                                  disabled={isPending || !isFormModified}
                                                             >
                                                                   Cancelar
                                                             </Button>

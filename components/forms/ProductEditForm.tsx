@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useState, useTransition } from "react"
+import { useEffect, useState, useTransition } from "react"
 import { BsFillBoxSeamFill, BsTrash, BsUpload, BsXCircle } from "react-icons/bs";
 import { ProductSchema } from "@/schemas";
 import Image from "next/image";
@@ -25,25 +25,46 @@ import { SyncLoading } from "@/components/loadings/SyncLoading"
 
 import useUploadedFiles from "@/hooks/use-uploaded-files";
 import { registerProduct } from "@/database/create/regiter-product";
+import { Product } from "@prisma/client";
+import { updateProduct } from "@/database/update/update-product";
 
-export const ProductRegisterForm = ({
+export const ProductEditForm = ({
       isOpen,
+      product,
       onClose,
 }: {
       isOpen: boolean
+      product: Product
       onClose: () => void
 }) => {
+      const initialData = {
+            id: product.id || "",
+            name: product.name || "",
+            price: product.price || "",
+            images: product.images || [],
+            description: product.description || "",
+      };
+
       const [success, setSuccess] = useState<string>("");
       const [error, setError] = useState<string>("");
-
+      const [isFormModified, setIsFormModified] = useState<boolean>(false);
       const [isPending, setIsPending] = useState<boolean>(false);
 
       const [transitioning, startTransition] = useTransition();
 
       const form = useForm<z.infer<typeof ProductSchema>>({
             resolver: zodResolver(ProductSchema),
-            defaultValues: {},
+            defaultValues: { ...initialData },
       });
+
+      useEffect(() => {
+            const isModified =
+                  form.getValues("name") !== initialData.name ||
+                  form.getValues("price") !== initialData.price ||
+                  form.getValues("description") !== initialData.description
+
+            setIsFormModified(isModified);
+      }, [form, initialData]);
 
       // Função para lidar com a mudança nos inputs de preço 'BRL'
       const handlePriceChange = (inputName: keyof z.infer<typeof ProductSchema>) => (
@@ -82,6 +103,11 @@ export const ProductRegisterForm = ({
             removeFile
       } = useUploadedFiles();
 
+      useEffect(() => {
+            if (initialData.images.length > 0) {
+                  setUploadedFiles(initialData.images);
+            }
+      }, [])
 
       const onSubmit = (values: z.infer<typeof ProductSchema>) => {
             setIsPending(true);
@@ -95,7 +121,7 @@ export const ProductRegisterForm = ({
 
                   values.images = uploadedFiles;
 
-                  registerProduct(values)
+                  updateProduct(values, product.id)
                         .then((data) => {
                               if (data?.error) {
                                     setError(data.error);
@@ -126,8 +152,8 @@ export const ProductRegisterForm = ({
                               <Card className={"cardForm"}>
                                     <HeaderForm
                                           icon={BsFillBoxSeamFill}
-                                          title={"Cadastro de Produto"}
-                                          description={!success ? ("Preencha o formulário abaixo para cadastrar um produto") : ("")}
+                                          title={"Editar Produto"}
+                                          description={!success ? ("Altere as informações do formulário abaixo para editar um produto") : ("")}
                                     />
 
                                     <Divider className="mt-2" style={{ marginBlock: "10px" }} />
@@ -157,7 +183,7 @@ export const ProductRegisterForm = ({
                                                                   error={form.formState.errors.name ? (true) : (false)}
                                                                   errorMessage={"Este campo é obrigatório"}
                                                                   disabled={isUploadingFiles || isPending}
-                                                                  autoComplete={"off"}
+                                                                  defaultValue={initialData.name}
                                                             />
                                                       </div>
 
@@ -170,8 +196,9 @@ export const ProductRegisterForm = ({
                                                                   placeholder={"R$ 0,00"}
                                                                   onChange={handlePriceChange('price')}
                                                                   error={form.formState.errors.price ? (true) : (false)}
-                                                                  errorMessage={"Este campo é obrigatório"}
+                                                                  errorMessage={form.formState.errors.description?.message}
                                                                   disabled={isUploadingFiles || isPending}
+                                                                  defaultValue={initialData.price}
                                                             />
                                                       </div>
 
@@ -238,10 +265,11 @@ export const ProductRegisterForm = ({
                                                                   placeholder={"Digite uma descrição curta e informativa do produto..."}
                                                                   onChange={(e) => form.setValue("description", e.target.value)}
                                                                   error={form.formState.errors.description ? (true) : (false)}
-                                                                  errorMessage={"Este campo é obrigatório"}
+                                                                  errorMessage={form.formState.errors.description?.message}
                                                                   disabled={isUploadingFiles || isPending}
                                                                   rows={4}
                                                                   maxLength={124}
+                                                                  defaultValue={initialData.description}
                                                             />
                                                       </div>
                                                 </Flex>
@@ -304,12 +332,9 @@ export const ProductRegisterForm = ({
                                                             <Flex className="justify-start space-x-2">
                                                                   <Button
                                                                         type={"button"}
-                                                                        onClick={() => {
-                                                                              setSuccess("")
-                                                                              setUploadedFiles([]);
-                                                                        }}
+                                                                        onClick={() => setSuccess("")}
                                                                   >
-                                                                        Cadastrar Novo Produto
+                                                                        Editar Novamente
                                                                   </Button>
                                                                   <Button
                                                                         type={"button"}
@@ -326,7 +351,7 @@ export const ProductRegisterForm = ({
                                                                   type={"submit"}
                                                                   disabled={isUploadingFiles || isPending}
                                                             >
-                                                                  Salvar Cadastro
+                                                                  Salvar Edição
                                                             </Button>
                                                             <Button
                                                                   type={"button"}
