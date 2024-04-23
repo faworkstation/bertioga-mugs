@@ -13,7 +13,7 @@ export const AccountVerificationForm = () => {
       const [success, setSuccess] = useState<string | undefined>();
 
       const searchParams = useSearchParams();
-      
+
       const token = searchParams.get("token");
 
       const [isPending, startTransition] = useTransition();

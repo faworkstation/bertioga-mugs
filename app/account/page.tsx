@@ -4,7 +4,10 @@ import { CategoryEditForm } from "@/components/forms/CategoryEditform";
 import { CategoryRegisterForm } from "@/components/forms/CategoryRegisterform";
 import { ProductEditForm } from "@/components/forms/ProductEditForm";
 import { ProductRegisterForm } from "@/components/forms/ProductRegisterForm";
+import { DeleteModal } from "@/components/modals/DeleteModal";
 import { SearchWithSelect } from "@/components/searches/SearchWithSelect";
+import { deleteCategory } from "@/database/delete/delete-category";
+import { deleteProduct } from "@/database/delete/delete-products";
 import { useCategoryData } from "@/hooks/use-category-data";
 import { useProductData } from "@/hooks/use-product-data";
 import { Button, Card, Flex, SelectItem, Subtitle, Tab, TabGroup, TabList, TabPanel, TabPanels, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
@@ -15,10 +18,12 @@ import { BsFillBoxSeamFill, BsFillClipboardCheckFill, BsFillLayersFill, BsFillPl
 export default function AccountPage() {
       const [isRegisterProductFormModalOpen, setIsRegisterProductFormModalOpen] = useState<boolean>(false);
       const [isEditProductFormModalOpen, setIsEditProductFormModalOpen] = useState<boolean>(false);
+      const [isDeleteProductModalOpen, setIsDeleteProductModalOpen] = useState<boolean>(false);
       const [selectedProductId, setSelectedProductId] = useState<string>("");
 
       const [isRegisterCategoryFormModalOpen, setIsRegisterCategoryFormModalOpen] = useState<boolean>(false);
       const [isEditCategoryFormModalOpen, setIsEditCategoryFormModalOpen] = useState<boolean>(false);
+      const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] = useState<boolean>(false);
       const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
 
       const { products } = useProductData();
@@ -30,6 +35,11 @@ export default function AccountPage() {
             setIsEditProductFormModalOpen(true);
       }
 
+      const handleOpenProductDeleteModal = async (id: string) => {
+            setSelectedProductId(id);
+            setIsDeleteProductModalOpen(true);
+      }
+
       const { categories } = useCategoryData();
 
       const categoryDetails = categories.find(category => category.id === selectedCategoryId);
@@ -37,6 +47,11 @@ export default function AccountPage() {
       const handleOpenCategoryDetailsModal = async (id: string) => {
             setSelectedCategoryId(id);
             setIsEditCategoryFormModalOpen(true);
+      }
+
+      const handleOpenCategoryDeleteModal = async (id: string) => {
+            setSelectedCategoryId(id);
+            setIsDeleteCategoryModalOpen(true);
       }
 
       return (
@@ -111,7 +126,12 @@ export default function AccountPage() {
                                                                                                 >
                                                                                                       Editar
                                                                                                 </Button>
-                                                                                                <Button icon={BsTrashFill} size={"md"} className="text-white bg-rose-400 hover:bg-rose-500 border-rose-500 transition-all duration-300">
+                                                                                                <Button
+                                                                                                      icon={BsTrashFill}
+                                                                                                      size={"md"}
+                                                                                                      className="text-white bg-rose-400 hover:bg-rose-500 border-rose-500 transition-all duration-300  hover:border-rose-500"
+                                                                                                      onClick={() => handleOpenProductDeleteModal(product.id)}
+                                                                                                >
                                                                                                       Remover
                                                                                                 </Button>
                                                                                           </Flex>
@@ -189,7 +209,12 @@ export default function AccountPage() {
                                                                                                 >
                                                                                                       Editar
                                                                                                 </Button>
-                                                                                                <Button icon={BsTrashFill} size={"md"} className="text-white bg-rose-400 hover:bg-rose-500 border-rose-500 transition-all duration-300">
+                                                                                                <Button
+                                                                                                      icon={BsTrashFill}
+                                                                                                      size={"md"}
+                                                                                                      className="text-white bg-rose-400 hover:bg-rose-500 border-rose-500 transition-all duration-300 hover:border-rose-500"
+                                                                                                      onClick={() => handleOpenCategoryDeleteModal(category.id)}
+                                                                                                >
                                                                                                       Remover
                                                                                                 </Button>
                                                                                           </Flex>
@@ -220,13 +245,6 @@ export default function AccountPage() {
                         />
                   )}
 
-                  {isRegisterCategoryFormModalOpen && (
-                        <CategoryRegisterForm
-                              isOpen={isRegisterCategoryFormModalOpen}
-                              onClose={() => setIsRegisterCategoryFormModalOpen(false)}
-                        />
-                  )}
-
                   {isEditCategoryFormModalOpen && categoryDetails && (
                         <CategoryEditForm
                               category={categoryDetails}
@@ -235,11 +253,36 @@ export default function AccountPage() {
                         />
                   )}
 
+                  {isDeleteCategoryModalOpen && categoryDetails && (
+                        <DeleteModal
+                              idToDeleteData={categoryDetails.id}
+                              deleteFunction={deleteCategory}
+                              isOpen={isDeleteCategoryModalOpen}
+                              onClose={() => setIsDeleteCategoryModalOpen(false)}
+                        />
+                  )}
+
+                  {isRegisterCategoryFormModalOpen && (
+                        <CategoryRegisterForm
+                              isOpen={isRegisterCategoryFormModalOpen}
+                              onClose={() => setIsRegisterCategoryFormModalOpen(false)}
+                        />
+                  )}
+
                   {isEditProductFormModalOpen && productDetails && (
                         <ProductEditForm
                               product={productDetails}
                               isOpen={isEditProductFormModalOpen}
                               onClose={() => setIsEditProductFormModalOpen(false)}
+                        />
+                  )}
+
+                  {isDeleteProductModalOpen && productDetails && (
+                        <DeleteModal
+                              idToDeleteData={productDetails.id}
+                              deleteFunction={deleteProduct}
+                              isOpen={isDeleteProductModalOpen}
+                              onClose={() => setIsDeleteProductModalOpen(false)}
                         />
                   )}
             </Flex>
