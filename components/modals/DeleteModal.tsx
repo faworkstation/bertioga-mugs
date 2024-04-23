@@ -67,7 +67,7 @@ export const DeleteModal = ({
                                           <Callout title={error} color={"red-400"} />
                                     ) : (
                                           <Callout title={"Você tem certeza que deseja excluir ?"} color={"red-400"} className="mt-4">
-                                                Ao clicar em "Sim, Excluir", todos os dados serão apagados de forma irreversível.
+                                                Ao clicar em &quot;Sim, Excluir&quot;, todos os dados serão apagados de forma irreversível.
                                                 Por favor, tenha certeza antes de prosseguir.
                                           </Callout>
                                     )}
