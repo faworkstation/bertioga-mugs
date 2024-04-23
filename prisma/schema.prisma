@@ -47,6 +47,7 @@ model User {
 
   accounts Account[]
   Product  Product[]
+  Category Category[]
 }
 
 model Product {
@@ -55,6 +56,20 @@ model Product {
   name        String
   images      String[]
   description String
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  Category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?
+}
+
+model Category {
+  id     String  @id @default(uuid())
+  name   String  @unique
+  parent String?
+
+  Product Product[]
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id])

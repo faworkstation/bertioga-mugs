@@ -58,3 +58,7 @@ export const ProductSchema = z.object({
       images: z.array(z.string()).optional(),
       description: z.string().min(1, { message: "Este campo é obrigatório" }),
 });
+export const CategorySchema = z.object({
+      name: z.string().min(1, { message: "Este campo é obrigatório" }),
+      parent: z.string().optional(),
+});

@@ -33,14 +33,14 @@ export const SearchWithSelect = React.memo(function SearchWithSelect({
                   className={"flex-col sm:flex-row"}
                   style={{ gap: "20px", width: "100%", maxWidth: "800px" }}
             >
-                  <Flex className="flex-col justify-start items-start">
-                        <h3 className={"sr-only"}> {inputLabel} </h3>
+                  <Flex className="flex-col justify-start items-start space-y-1">
+                        <h3 className="ml-1 text-tremor-default"> {inputLabel} </h3>
                         <TextInput
                               className="border-slate-300"
                               type="text"
                               name="search"
                               icon={BsSearch}
-                              placeholder={"Pesquisar..."}
+                              placeholder={"Insira o nome para pesquisar..."}
                               spellCheck={false}
                               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                                     handleInputChange(e.target.value)
@@ -48,14 +48,14 @@ export const SearchWithSelect = React.memo(function SearchWithSelect({
                         />
                   </Flex>
 
-                  <Flex className="flex-col justify-start items-start">
-                        <h3 className={"sr-only"}> {selectLabel} </h3>
+                  <Flex className="flex-col justify-start items-start space-y-1">
+                        <h3 className="ml-1 text-tremor-default"> {selectLabel} </h3>
                         <Select
                               className="border border-slate-300 rounded-tremor-default"
                               name={"select"}
                               onValueChange={handleStatusChange}
                               value={selectedStatus}
-                              placeholder="Selecionar"
+                              placeholder="Clique para selecionar"
                         >
                               {children}
                         </Select>
