@@ -127,7 +127,8 @@ export const CategoryRegisterForm = ({
                                     >
                                           {!success && (
                                                 <Flex
-                                                      className={"flex-col pb-2 space-y-4 items-start justify-start"} >
+                                                      className={"flex-col pb-2 space-y-4 items-start justify-start"}
+                                                >
                                                       <div className="w-full space-y-1">
                                                             <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Digite o Nome da Categoria</h3>
                                                             <TextInput
@@ -162,7 +163,12 @@ export const CategoryRegisterForm = ({
                                                             </Select>
                                                       </div>
 
-                                                      <div className="w-full space-y-1">
+                                                      <div className="w-full space-y-1" style={{
+                                                            overflow: "auto",
+                                                            height: "auto",
+                                                            maxHeight: "200px",
+                                                            paddingInline: "5px"
+                                                      }}>
                                                             <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Propriedades</h3>
                                                             {properties.length > 0 && properties.map((property, index) => (
                                                                   <Flex className="items-start space-x-2" key={index}>

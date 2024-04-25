@@ -181,12 +181,12 @@ export const ProductRegisterForm = ({
                                                       className={"flex-col overflow-auto pb-2 space-y-4 items-start"}
                                                       style={{
                                                             height: "auto",
-                                                            maxHeight: "400px",
-                                                            scrollbarWidth: "none",
+                                                            maxHeight: "420px",
+                                                            paddingInline: "5px"
                                                       }}
                                                 >
                                                       <div className="w-full space-y-1">
-                                                            <h3 className="text-tremor-label font-bold text-slate-800">Digite o Nome do Produto</h3>
+                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Digite o Nome do Produto</h3>
                                                             <TextInput
                                                                   className="defaultInput"
                                                                   type={"text"}
@@ -220,7 +220,7 @@ export const ProductRegisterForm = ({
 
                                                       </div>
                                                       <div className="w-full space-y-1">
-                                                            <h3 className="text-tremor-label font-bold text-slate-800">Insira o Valor de Venda</h3>
+                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Insira o Valor de Venda</h3>
                                                             <TextInput
                                                                   className="defaultInput"
                                                                   type={"text"}
@@ -234,7 +234,7 @@ export const ProductRegisterForm = ({
                                                       </div>
 
                                                       <div className="w-full space-y-1">
-                                                            <h3 className="text-tremor-label font-bold text-slate-800">Fotos do Produto</h3>
+                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-1 mb-2">Fotos do Produto</h3>
                                                             <div className="flex flex-wrap items-center" style={{ gap: "10px" }}>
                                                                   {!!uploadedFiles?.length && uploadedFiles?.map((link, index) => (
                                                                         <div className="relative" key={index}>
@@ -287,24 +287,8 @@ export const ProductRegisterForm = ({
                                                                   )}
                                                             </div>
                                                       </div>
-
                                                       <div className="w-full space-y-1">
-                                                            <h3 className="text-tremor-label font-bold text-slate-800">Descreva o produto</h3>
-                                                            <Textarea
-                                                                  className="defaultInput"
-                                                                  name={"description"}
-                                                                  placeholder={"Digite uma descrição curta e informativa do produto..."}
-                                                                  onChange={(e) => form.setValue("description", e.target.value)}
-                                                                  error={form.formState.errors.description ? (true) : (false)}
-                                                                  errorMessage={"Este campo é obrigatório"}
-                                                                  disabled={isUploadingFiles || isPending}
-                                                                  rows={4}
-                                                                  maxLength={124}
-                                                            />
-                                                      </div>
-
-                                                      <div className="w-full space-y-1">
-                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Propriedades</h3>
+                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-2">Propriedades</h3>
                                                             {properties.length > 0 && properties.map((property, index) => (
                                                                   <Flex className="items-start space-x-2" key={index}>
                                                                         <Flex className="sm:flex-row flex-col" style={{ gap: '5px' }}>
@@ -339,6 +323,20 @@ export const ProductRegisterForm = ({
                                                             >
                                                                   + Adicione propriedades
                                                             </Button>
+                                                      </div>
+                                                      <div className="w-full space-y-1">
+                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-2">Descreva o produto</h3>
+                                                            <Textarea
+                                                                  className="defaultInput"
+                                                                  name={"description"}
+                                                                  placeholder={"Digite uma descrição curta e informativa do produto..."}
+                                                                  onChange={(e) => form.setValue("description", e.target.value)}
+                                                                  error={form.formState.errors.description ? (true) : (false)}
+                                                                  errorMessage={"Este campo é obrigatório"}
+                                                                  disabled={isUploadingFiles || isPending}
+                                                                  rows={4}
+                                                                  maxLength={124}
+                                                            />
                                                       </div>
                                                 </Flex>
                                           )}
@@ -417,22 +415,13 @@ export const ProductRegisterForm = ({
                                                             </Flex>
                                                       </Flex>
                                                 ) : (
-                                                      <Flex className="justify-start space-x-2">
-                                                            <Button
-                                                                  type={"submit"}
-                                                                  disabled={isUploadingFiles || isPending}
-                                                            >
-                                                                  Salvar Cadastro
-                                                            </Button>
-                                                            <Button
-                                                                  type={"button"}
-                                                                  variant="secondary"
-                                                                  onClick={onClose}
-                                                                  disabled={isUploadingFiles || isPending}
-                                                            >
-                                                                  Cancelar
-                                                            </Button>
-                                                      </Flex>
+                                                      <Button
+                                                            className="w-full"
+                                                            type={"submit"}
+                                                            disabled={isUploadingFiles || isPending}
+                                                      >
+                                                            Salvar Cadastro
+                                                      </Button>
                                                 )}
                                           </Flex>
                                     </form>
