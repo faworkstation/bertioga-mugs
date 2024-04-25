@@ -35,6 +35,7 @@ export const StockTable = ({
                               <TableHead>
                                     <TableRow>
                                           <TableHeaderCell>Nome do Produto</TableHeaderCell>
+                                          <TableHeaderCell>Categoria</TableHeaderCell>
                                           <TableHeaderCell>Valor de Venda</TableHeaderCell>
                                           <TableHeaderCell></TableHeaderCell>
                                     </TableRow>
@@ -46,6 +47,7 @@ export const StockTable = ({
                                                 return (
                                                       <TableRow key={product.id}>
                                                             <TableCell>{product.name}</TableCell>
+                                                            <TableCell>{product.categoryName}</TableCell>
                                                             <TableCell>{product.price}</TableCell>
                                                             <TableCell>
                                                                   <Flex className="justify-start space-x-2">

@@ -14,6 +14,8 @@ import {
       Card,
       Divider,
       Flex,
+      Select,
+      SelectItem,
       TextInput,
       Textarea
 } from "@tremor/react";
@@ -102,7 +104,7 @@ export const ProductRegisterForm = ({
                   }
 
                   values.images = uploadedFiles;
-                  values.properties = properties; 
+                  values.properties = properties;
 
                   registerProduct(values)
                         .then((data) => {
@@ -197,7 +199,26 @@ export const ProductRegisterForm = ({
                                                                   autoComplete={"off"}
                                                             />
                                                       </div>
+                                                      <div className="w-full space-y-1">
+                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Selecione uma Categoria</h3>
+                                                            <Select
+                                                                  className="border border-slate-300 rounded-tremor-default"
+                                                                  name={"category"}
+                                                                  onValueChange={(value: string) => {
+                                                                        const selectedCategory = categories.find((cat) => cat.id === value);
+                                                                        form.setValue("categoryId", value);
+                                                                        form.setValue("categoryName", selectedCategory ? selectedCategory.name : "");
+                                                                  }}
+                                                                  placeholder="Clique para selecionar"
+                                                            >
+                                                                  {categories.map((category) => (
+                                                                        <SelectItem key={category.id} value={category.id}>
+                                                                              {category.name}
+                                                                        </SelectItem>
+                                                                  ))}
+                                                            </Select>
 
+                                                      </div>
                                                       <div className="w-full space-y-1">
                                                             <h3 className="text-tremor-label font-bold text-slate-800">Insira o Valor de Venda</h3>
                                                             <TextInput

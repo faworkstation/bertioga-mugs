@@ -64,6 +64,7 @@ model Product {
 
   Category   Category? @relation(fields: [categoryId], references: [id])
   categoryId String?
+  categoryName String?
 }
 
 model Category {

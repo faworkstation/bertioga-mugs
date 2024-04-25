@@ -60,6 +60,8 @@ export const PropertySchema = z.object({
 
 export const ProductSchema = z.object({
       name: z.string().min(1, { message: "Este campo é obrigatório" }),
+      categoryId: z.string().optional(),
+      categoryName: z.string().optional(),
       price: z.string().min(1, { message: "Este campo é obrigatório" }),
       images: z.array(z.string()).optional(),
       description: z.string().min(1, { message: "Este campo é obrigatório" }),

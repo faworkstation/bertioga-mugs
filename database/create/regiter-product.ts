@@ -13,7 +13,7 @@ export const registerProduct = async (values: z.infer<typeof ProductSchema>) => 
 
       if (!validatedFields.success) return { error: "Campos inválidos ou inexsitentes. Por favor, insira campos válidos." };
 
-      const { description, price, name, images, properties = [] } = validatedFields.data;
+      const { description, price, name, images, categoryId, categoryName, properties = [] } = validatedFields.data;
 
       const existingProductName = await getProductByName(name);
 
@@ -38,6 +38,8 @@ export const registerProduct = async (values: z.infer<typeof ProductSchema>) => 
                         description,
                         properties: propertiesJson,
                         userId: user.id,
+                        categoryId: categoryId,
+                        categoryName: categoryName,
                   },
             });
 

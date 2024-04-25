@@ -4,8 +4,15 @@ import { db } from "@/libs/db";
 
 export const getAllCategories = async () => {
       try {
-            const allCategories = await db.category.findMany();
+            const allCategories = await db.category.findMany({
+                  select: {
+                        id: true,
+                        name: true,
+                  },
+            });
+
             return allCategories;
+
       } catch (error) {
             console.error("Ops! Ocorreu um erro ao buscar as produtos:", error);
             return [];
