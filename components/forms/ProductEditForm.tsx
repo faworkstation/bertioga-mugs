@@ -24,7 +24,7 @@ import { HeaderForm } from "@/components/forms/HeaderForm";
 import { SyncLoading } from "@/components/loadings/SyncLoading"
 
 import useUploadedFiles from "@/hooks/use-uploaded-files";
-import { registerProduct } from "@/database/create/regiter-product";
+import { registerProduct } from "@/database/create/register-product";
 import { Product } from "@prisma/client";
 import { updateProduct } from "@/database/update/update-product";
 

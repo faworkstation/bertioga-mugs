@@ -14,7 +14,7 @@ import {
 } from "@tremor/react";
 
 type CategoryTableProps = {
-      categories: Category[];
+      categories: { id: string, name: string, parent: string | null }[];
       handleOpenDetailsModal: (id: string) => void;
       handleOpenDeleteModal: (id: string) => void;
 };

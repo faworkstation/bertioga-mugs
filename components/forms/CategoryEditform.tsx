@@ -32,8 +32,12 @@ export const CategoryEditForm = ({
       onClose,
 }: {
       isOpen: boolean
-      category: Category
       onClose: () => void
+      category: {
+            id: string,
+            name: string,
+            parent: string | null
+      }
 }) => {
       const initialData = {
             id: category.id || "",
