@@ -4,7 +4,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState, useTransition } from "react"
-import { BsFillBoxSeamFill, BsTrash, BsUpload, BsXCircle } from "react-icons/bs";
+import { BsFillBoxSeamFill, BsTrash, BsTrashFill, BsUpload, BsXCircle } from "react-icons/bs";
 import { ProductSchema } from "@/schemas";
 import Image from "next/image";
 
@@ -25,6 +25,12 @@ import { SyncLoading } from "@/components/loadings/SyncLoading"
 
 import useUploadedFiles from "@/hooks/use-uploaded-files";
 import { registerProduct } from "@/database/create/regiter-product";
+import { useCategoryData } from "@/hooks/use-category-data";
+
+interface CategoryProperty {
+      name: string;
+      values: string;
+}
 
 export const ProductRegisterForm = ({
       isOpen,
@@ -33,12 +39,15 @@ export const ProductRegisterForm = ({
       isOpen: boolean
       onClose: () => void
 }) => {
+      const [properties, setProperties] = useState<CategoryProperty[] | []>([]);
       const [success, setSuccess] = useState<string>("");
       const [error, setError] = useState<string>("");
 
       const [isPending, setIsPending] = useState<boolean>(false);
 
       const [transitioning, startTransition] = useTransition();
+      const { categories } = useCategoryData();
+
 
       const form = useForm<z.infer<typeof ProductSchema>>({
             resolver: zodResolver(ProductSchema),
@@ -82,7 +91,6 @@ export const ProductRegisterForm = ({
             removeFile
       } = useUploadedFiles();
 
-
       const onSubmit = (values: z.infer<typeof ProductSchema>) => {
             setIsPending(true);
 
@@ -94,6 +102,7 @@ export const ProductRegisterForm = ({
                   }
 
                   values.images = uploadedFiles;
+                  values.properties = properties; 
 
                   registerProduct(values)
                         .then((data) => {
@@ -118,6 +127,34 @@ export const ProductRegisterForm = ({
             setSuccess("");
             setError("");
       };
+
+
+      const addProperty = () => {
+            setProperties(prev => {
+                  return [...prev, { name: '', values: '' }];
+            })
+      }
+
+      const handlePropertyNameChange = (index: number, newName: string) => {
+            setProperties((prev) => {
+                  const updatedProperties = [...prev];
+                  updatedProperties[index].name = newName;
+                  return updatedProperties;
+            });
+      };
+
+      const handlePropertyValuesChange = (index: number, newValues: string) => {
+            setProperties((prev) => {
+                  const updatedProperties = [...prev];
+                  updatedProperties[index].values = newValues;
+                  return updatedProperties;
+            });
+      };
+
+      const removeProperty = (indexToRemove: number) => {
+            setProperties((prev) => prev.filter((_, index) => index !== indexToRemove));
+      };
+
 
       return (
             <Flex className={`${isOpen ? "fixed" : "hidden"} modal`} >
@@ -243,6 +280,44 @@ export const ProductRegisterForm = ({
                                                                   rows={4}
                                                                   maxLength={124}
                                                             />
+                                                      </div>
+
+                                                      <div className="w-full space-y-1">
+                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Propriedades</h3>
+                                                            {properties.length > 0 && properties.map((property, index) => (
+                                                                  <Flex className="items-start space-x-2" key={index}>
+                                                                        <Flex className="sm:flex-row flex-col" style={{ gap: '5px' }}>
+                                                                              <TextInput
+                                                                                    className="max-w-sm"
+                                                                                    type="text"
+                                                                                    value={property.name}
+                                                                                    onChange={e => handlePropertyNameChange(index, e.target.value)}
+                                                                                    placeholder="Nome da propriedade (ex: cor)"
+                                                                              />
+                                                                              <TextInput
+                                                                                    className="max-w-sm"
+                                                                                    type="text"
+                                                                                    value={property.values}
+                                                                                    onChange={e => handlePropertyValuesChange(index, e.target.value)}
+                                                                                    placeholder="Valores separados por vírgula"
+                                                                              />
+                                                                        </Flex>
+                                                                        <Button
+                                                                              icon={BsTrashFill}
+                                                                              type="button"
+                                                                              className="text-white bg-slate-400 hover:bg-slate-500 border-slate-500 transition-all duration-300 hover:border-slate-500"
+                                                                              onClick={() => removeProperty(index)}
+                                                                        />
+                                                                  </Flex>
+                                                            ))}
+                                                            <Button
+                                                                  onClick={addProperty}
+                                                                  type="button"
+                                                                  className="p-2"
+                                                                  variant="light"
+                                                            >
+                                                                  + Adicione propriedades
+                                                            </Button>
                                                       </div>
                                                 </Flex>
                                           )}

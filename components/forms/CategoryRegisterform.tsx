@@ -53,8 +53,8 @@ export const CategoryRegisterForm = ({
 
       const onSubmit = (values: z.infer<typeof CategorySchema>) => {
             setIsPending(true);
-            
-            values.properties = properties; 
+
+            values.properties = properties;
 
             startTransition(() => {
                   registerCategory(values)

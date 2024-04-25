@@ -56,6 +56,8 @@ model Product {
   name        String
   images      String[]
   description String
+  
+  properties Json?
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
@@ -65,35 +67,15 @@ model Product {
 }
 
 model Category {
-  id     String  @id @default(uuid())
-  name   String  @unique
-  parent String?
+  id      String  @id @default(uuid())
+  name    String  @unique
+  parent  String?
+  userId  String?
+  user    User?   @relation(fields: [userId], references: [id])
+  
+  properties Json?
 
   Product Product[]
-
-  userId           String?
-  user             User?              @relation(fields: [userId], references: [id])
-  
-  CategoryProperty CategoryProperty[]
-}
-
-model Property {
-  id               String             @id @default(uuid())
-  name             String
-  values           String
-
-  CategoryProperty CategoryProperty[]
-}
-
-// Tabela intermediária para representar a relação muitos para muitos entre categorias e propriedades
-model CategoryProperty {
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
-  propertyId String
-  property   Property @relation(fields: [propertyId], references: [id])
-
-  @@id([categoryId, propertyId])
 }
 
 model VerificationToken {

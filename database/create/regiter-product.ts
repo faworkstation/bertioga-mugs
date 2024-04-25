@@ -13,13 +13,19 @@ export const registerProduct = async (values: z.infer<typeof ProductSchema>) => 
 
       if (!validatedFields.success) return { error: "Campos inválidos ou inexsitentes. Por favor, insira campos válidos." };
 
-      const { description, price, name, images } = validatedFields.data;
+      const { description, price, name, images, properties = [] } = validatedFields.data;
 
       const existingProductName = await getProductByName(name);
 
       if (existingProductName) {
             return { error: `Já existe um produto cadastrado com este nome. Por favor, tente um nome diferente.` };
       }
+
+      // Objeto JSON contendo as propriedades
+      const propertiesJson = properties.map((prop) => ({
+            name: prop.name,
+            values: prop.values.split(',').map((v) => v.trim()), // Garante que os valores estejam limpos
+      }));
 
       const user = await currentUser();
 
@@ -30,6 +36,7 @@ export const registerProduct = async (values: z.infer<typeof ProductSchema>) => 
                         images: images,
                         name,
                         description,
+                        properties: propertiesJson,
                         userId: user.id,
                   },
             });

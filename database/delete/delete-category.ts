@@ -7,11 +7,6 @@ export const deleteCategory = async (categoryId: string): Promise<{
       error: string
 }> => {
       try { 
-            // Primeiro, remova as associações do CategoryProperty relacionadas à categoria
-            await db.categoryProperty.deleteMany({
-                where: { categoryId },
-            });
-
             const response = await db.category.delete({
                   where: { id: categoryId },
             });
@@ -28,11 +23,11 @@ export const deleteCategory = async (categoryId: string): Promise<{
                   error: ""
             };
       } catch (error) {
-            console.error("Erro ao excluir a Categoria:", error);
+            console.error("Ops! ocorreu um erro ao excluir a Categoria:", error);
 
             return {
                   success: "",
-                  error: "Erro ao excluir a Categoria."
+                  error: "Ops! ocorreu um erro ao excluir a Categoria"
             };
       };
 };
