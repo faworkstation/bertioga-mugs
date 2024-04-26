@@ -55,7 +55,7 @@ export const SettingsSchema = z.object({
 // Definição do schema para propriedades individuais
 export const PropertySchema = z.object({
       name: z.string().min(1, { message: "O nome da propriedade é obrigatório" }),
-      values: z.string().min(1, { message: "Os valores da propriedade são obrigatórios" }),
+      values: z.array(z.string()).min(1, { message: "Os valores da propriedade são obrigatórios" }),
 });
 
 export const ProductSchema = z.object({
@@ -71,5 +71,4 @@ export const ProductSchema = z.object({
 export const CategorySchema = z.object({
       name: z.string().min(1, { message: "Este campo é obrigatório" }),
       parent: z.string().optional(),
-      properties: z.array(PropertySchema).optional(),
 });

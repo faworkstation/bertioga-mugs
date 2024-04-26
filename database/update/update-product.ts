@@ -13,7 +13,7 @@ export const updateProduct = async (values: z.infer<typeof ProductSchema>, produ
 
       if (!validatedFields.success) return { error: "Campos inválidos ou inexsitentes. Por favor, insira campos válidos." };
 
-      const { description, price, name, images } = validatedFields.data;
+      const { description, price, name, images, categoryId, categoryName, properties = [] } = validatedFields.data;
 
       const existingProductName = await getProductByName(name);
 
@@ -32,6 +32,9 @@ export const updateProduct = async (values: z.infer<typeof ProductSchema>, produ
                         name,
                         description,
                         userId: user.id,
+                        categoryId: categoryId,
+                        categoryName: categoryName,
+                        properties: properties,
                   },
             });
 

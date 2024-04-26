@@ -21,12 +21,6 @@ export const registerProduct = async (values: z.infer<typeof ProductSchema>) => 
             return { error: `Já existe um produto cadastrado com este nome. Por favor, tente um nome diferente.` };
       }
 
-      // Objeto JSON contendo as propriedades
-      const propertiesJson = properties.map((prop) => ({
-            name: prop.name,
-            values: prop.values.split(',').map((v) => v.trim()), // Garante que os valores estejam limpos
-      }));
-
       const user = await currentUser();
 
       if (user && user.role === UserRole.ADMIN) {
@@ -36,7 +30,7 @@ export const registerProduct = async (values: z.infer<typeof ProductSchema>) => 
                         images: images,
                         name,
                         description,
-                        properties: propertiesJson,
+                        properties: properties,
                         userId: user.id,
                         categoryId: categoryId,
                         categoryName: categoryName,

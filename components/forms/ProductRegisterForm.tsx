@@ -31,8 +31,8 @@ import { useCategoryData } from "@/hooks/use-category-data";
 
 interface CategoryProperty {
       name: string;
-      values: string;
-}
+      values: string[];
+}[]
 
 export const ProductRegisterForm = ({
       isOpen,
@@ -94,18 +94,18 @@ export const ProductRegisterForm = ({
       } = useUploadedFiles();
 
       const onSubmit = (values: z.infer<typeof ProductSchema>) => {
+            if (uploadedFiles.length === 0) {
+                  setIsPending(false);
+                  setError("Por favor, insira fotos do produto. Clique no botão upload para adicionar fotos.");
+                  return;
+            }
+
+            values.images = uploadedFiles;
+            values.properties = properties;
+            
             setIsPending(true);
 
             startTransition(() => {
-                  if (uploadedFiles.length === 0) {
-                        setIsPending(false);
-                        setError("Por favor, insira fotos do produto. Clique no botão upload para adicionar fotos.");
-                        return;
-                  }
-
-                  values.images = uploadedFiles;
-                  values.properties = properties;
-
                   registerProduct(values)
                         .then((data) => {
                               if (data?.error) {
@@ -132,10 +132,14 @@ export const ProductRegisterForm = ({
 
 
       const addProperty = () => {
-            setProperties(prev => {
-                  return [...prev, { name: '', values: '' }];
+            setProperties((prev: CategoryProperty[]) => {
+                  return [...prev, { name: '', values: [] }];
             })
       }
+
+      const removeProperty = (indexToRemove: number) => {
+            setProperties((prev) => prev.filter((_, index) => index !== indexToRemove));
+      };
 
       const handlePropertyNameChange = (index: number, newName: string) => {
             setProperties((prev) => {
@@ -146,17 +150,17 @@ export const ProductRegisterForm = ({
       };
 
       const handlePropertyValuesChange = (index: number, newValues: string) => {
+            // Divide a string 'newValues' usando vírgulas como separadores e remove espaços extras
+            const valuesArray = newValues ? newValues.split(',').map((value) => value.trim()) : [];
+
+            // Atualiza a propriedade no estado 'properties'
             setProperties((prev) => {
                   const updatedProperties = [...prev];
-                  updatedProperties[index].values = newValues;
+                  // Atualiza os valores da propriedade correspondente ao índice
+                  updatedProperties[index].values = valuesArray; // 'values' é um array
                   return updatedProperties;
             });
       };
-
-      const removeProperty = (indexToRemove: number) => {
-            setProperties((prev) => prev.filter((_, index) => index !== indexToRemove));
-      };
-
 
       return (
             <Flex className={`${isOpen ? "fixed" : "hidden"} modal`} >
@@ -302,7 +306,7 @@ export const ProductRegisterForm = ({
                                                                               <TextInput
                                                                                     className="max-w-sm"
                                                                                     type="text"
-                                                                                    value={property.values}
+                                                                                    value={property.values.join(', ')}
                                                                                     onChange={e => handlePropertyValuesChange(index, e.target.value)}
                                                                                     placeholder="Valores separados por vírgula"
                                                                               />

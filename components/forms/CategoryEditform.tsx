@@ -3,9 +3,11 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useEffect, useState, useTransition } from "react"
+import { useState, useTransition } from "react"
 import { BsFillLayersFill, BsXCircle } from "react-icons/bs";
+
 import { CategorySchema } from "@/schemas";
+import { Category } from "@prisma/client";
 
 import {
       Button,
@@ -23,50 +25,31 @@ import { HeaderForm } from "@/components/forms/HeaderForm";
 import { SyncLoading } from "@/components/loadings/SyncLoading"
 
 import { useCategoryData } from "@/hooks/use-category-data";
-import { Category } from "@prisma/client";
 import { updateCategory } from "@/database/update/update-category";
 
-export const CategoryEditForm = ({
-      isOpen,
-      category,
-      onClose,
-}: {
-      isOpen: boolean
-      onClose: () => void
-      category: {
-            id: string,
-            name: string,
-            parent: string | null
-      }
-}) => {
+interface CategoryEditFormProps {
+      isOpen: boolean;
+      category: Category;
+      onClose: () => void;
+};
+
+export const CategoryEditForm = ({ isOpen, category, onClose, }: CategoryEditFormProps) => {
+      const [success, setSuccess] = useState<string>("");
+      const [error, setError] = useState<string>("");
+      const [isPending, setIsPending] = useState<boolean>(false);
+
+      const [transitioning, startTransition] = useTransition();
+
       const initialData = {
             id: category.id || "",
             name: category.name || "",
             parent: category.parent || ""
       };
 
-      const [success, setSuccess] = useState<string>("");
-      const [error, setError] = useState<string>("");
-      const [isFormModified, setIsFormModified] = useState<boolean>(false);
-      const [isPending, setIsPending] = useState<boolean>(false);
-
-      const [transitioning, startTransition] = useTransition();
-
       const form = useForm<z.infer<typeof CategorySchema>>({
             resolver: zodResolver(CategorySchema),
             defaultValues: { ...initialData },
       });
-
-      const parentValue = form.watch("parent");
-      const nameValue = form.watch("name");
-
-      useEffect(() => {
-            const isModified =
-                  nameValue !== initialData.name ||
-                  parentValue !== initialData.parent;
-
-            setIsFormModified(isModified);
-      }, [parentValue, nameValue, form, initialData]);
 
       const { categories } = useCategoryData();
 
@@ -74,7 +57,7 @@ export const CategoryEditForm = ({
             setIsPending(true);
 
             startTransition(() => {
-                  updateCategory(values, initialData.id)
+                  updateCategory(values, category.id)
                         .then((data) => {
                               if (data?.error) {
                                     setError(data.error);
@@ -105,8 +88,8 @@ export const CategoryEditForm = ({
                               <Card className={"cardForm"}>
                                     <HeaderForm
                                           icon={BsFillLayersFill}
-                                          title={"Editar Categoria"}
-                                          description={!success ? ("Altere as informações do formulário abaixo para editar uma categoria") : ("")}
+                                          title={"Registro de Categoria"}
+                                          description={!success ? ("Preencha o formulário abaixo para registrar uma categoria") : ("")}
                                     />
 
                                     <Divider className="mt-2" style={{ marginBlock: "10px" }} />
@@ -117,8 +100,7 @@ export const CategoryEditForm = ({
                                           onChange={cleanMessages}
                                     >
                                           {!success && (
-                                                <Flex
-                                                      className={"flex-col pb-2 space-y-4 items-start justify-start"} >
+                                                <Flex className={"flex-col pb-2 space-y-4 items-start justify-start"} >
                                                       <div className="w-full space-y-1">
                                                             <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Digite o Nome da Categoria</h3>
                                                             <TextInput
@@ -126,25 +108,22 @@ export const CategoryEditForm = ({
                                                                   type={"text"}
                                                                   name={"name"}
                                                                   placeholder={"Ex: Categoria X"}
-                                                                  onChange={(e) => {
-                                                                        form.setValue("name", e.target.value)
-                                                                        form.trigger("name")
-                                                                  }}
+                                                                  onChange={(e) => form.setValue("name", e.target.value)}
                                                                   error={form.formState.errors.name ? (true) : (false)}
-                                                                  errorMessage={form.formState.errors.name?.message}
+                                                                  errorMessage={"Este campo é obrigatório"}
+                                                                  disabled={isPending}
+                                                                  autoComplete={"off"}
                                                                   defaultValue={initialData.name}
                                                             />
                                                       </div>
+
                                                       <div className="w-full space-y-1">
                                                             <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Selecione uma Subcategoria</h3>
                                                             <Select
                                                                   className="border border-slate-300 rounded-tremor-default"
                                                                   name={"parent"}
-                                                                  onValueChange={(value: string) => {
-                                                                        form.setValue("parent", value);
-                                                                        form.trigger("parent");
-                                                                  }}
-                                                                  placeholder={initialData.parent}
+                                                                  onValueChange={(value: string) => form.setValue("parent", value)}
+                                                                  placeholder="Clique para selecionar"
                                                                   defaultValue={initialData.parent}
                                                             >
                                                                   {categories.length > 0
@@ -175,7 +154,6 @@ export const CategoryEditForm = ({
                                                                         color={"red"}
                                                                   />
                                                             </AnimBottomToTop>
-
                                                             <Button
                                                                   className="w-full"
                                                                   type={"button"}
@@ -196,7 +174,6 @@ export const CategoryEditForm = ({
                                                                         color={"teal"}
                                                                   />
                                                             </AnimBottomToTop>
-
                                                             <Flex className="justify-start space-x-2">
                                                                   <Button
                                                                         type={"button"}
@@ -204,7 +181,7 @@ export const CategoryEditForm = ({
                                                                               setSuccess("")
                                                                         }}
                                                                   >
-                                                                        Editar Novamente
+                                                                        Registrar Nova Categoria
                                                                   </Button>
                                                                   <Button
                                                                         type={"button"}
@@ -216,22 +193,13 @@ export const CategoryEditForm = ({
                                                             </Flex>
                                                       </Flex>
                                                 ) : (
-                                                      <Flex className="justify-start space-x-2">
-                                                            <Button
-                                                                  type={"submit"}
-                                                                  disabled={isPending || !isFormModified}
-                                                            >
-                                                                  Salvar Edição
-                                                            </Button>
-                                                            <Button
-                                                                  type={"button"}
-                                                                  variant="secondary"
-                                                                  onClick={onClose}
-                                                                  disabled={isPending || !isFormModified}
-                                                            >
-                                                                  Cancelar
-                                                            </Button>
-                                                      </Flex>
+                                                      <Button
+                                                            className="w-full"
+                                                            type={"submit"}
+                                                            disabled={isPending}
+                                                      >
+                                                            Salvar Registro
+                                                      </Button>
                                                 )}
                                           </Flex>
                                     </form>

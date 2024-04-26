@@ -14,13 +14,7 @@ export const registerCategory = async (values: z.infer<typeof CategorySchema>) =
             return { error: "Campos inválidos ou inexistentes. Por favor, insira campos válidos." };
       }
 
-      const { name, parent, properties = [] } = validatedFields.data;
-
-      // Objeto JSON contendo as propriedades
-      const propertiesJson = properties.map((prop) => ({
-            name: prop.name,
-            values: prop.values.split(',').map((v) => v.trim()), // Garante que os valores estejam limpos
-      }));
+      const { name, parent } = validatedFields.data;
 
       const user = await currentUser();
 
@@ -30,7 +24,6 @@ export const registerCategory = async (values: z.infer<typeof CategorySchema>) =
                         name,
                         parent,
                         userId: user.id,
-                        properties: propertiesJson, // Salva o objeto JSON no banco de dados
                   },
             });
 

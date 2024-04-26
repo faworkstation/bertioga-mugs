@@ -4,8 +4,11 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useEffect, useState, useTransition } from "react"
-import { BsFillBoxSeamFill, BsTrash, BsUpload, BsXCircle } from "react-icons/bs";
+import { BsFillBoxSeamFill, BsTrash, BsTrashFill, BsUpload, BsXCircle } from "react-icons/bs";
+
 import { ProductSchema } from "@/schemas";
+import { Product } from "@prisma/client";
+
 import Image from "next/image";
 
 import {
@@ -14,6 +17,8 @@ import {
       Card,
       Divider,
       Flex,
+      Select,
+      SelectItem,
       TextInput,
       Textarea
 } from "@tremor/react";
@@ -23,48 +28,162 @@ import { BounceLoading } from "@/components/loadings/BounceLoading";
 import { HeaderForm } from "@/components/forms/HeaderForm";
 import { SyncLoading } from "@/components/loadings/SyncLoading"
 
+import { useCategoryData } from "@/hooks/use-category-data";
 import useUploadedFiles from "@/hooks/use-uploaded-files";
-import { registerProduct } from "@/database/create/register-product";
-import { Product } from "@prisma/client";
 import { updateProduct } from "@/database/update/update-product";
 
-export const ProductEditForm = ({
-      isOpen,
-      product,
-      onClose,
-}: {
-      isOpen: boolean
-      product: Product
-      onClose: () => void
-}) => {
-      const initialData = {
+interface PropsOfProperties {
+      name: string;
+      values: string[];
+}[];
+
+interface ProductEditFormProps {
+      isOpen: boolean;
+      product: Product;
+      onClose: () => void;
+}
+
+const convertToPropsOfProperties = (json: any): PropsOfProperties[] => {
+      if (!Array.isArray(json)) {
+            return [];
+      };
+
+      return json.map((item) => {
+            if (typeof item === 'object' && item !== null && 'name' in item && 'values' in item && Array.isArray(item.values)) {
+                  return {
+                        name: item.name || '',
+                        values: item.values.filter((v: string) => typeof v === 'string'),
+                  };
+            }
+
+            return {
+                  name: '',
+                  values: [],
+            };
+      });
+};
+
+const getInitialData = (product: Product) => {
+      const initialProperties = convertToPropsOfProperties(product.properties);
+
+      return {
             id: product.id || "",
             name: product.name || "",
             price: product.price || "",
             images: product.images || [],
             description: product.description || "",
+            categoryId: product.categoryId || "",
+            categoryName: product.categoryName || "",
+            properties: initialProperties,
       };
+};
 
-      const [success, setSuccess] = useState<string>("");
+export const ProductEditForm = ({
+      isOpen,
+      product,
+      onClose,
+}: ProductEditFormProps) => {
+      // Dados inicias do formulário de edição.
+      const initialData = getInitialData(product);
+
+      // Estados iniciais das propriedades e dos status do formulário
+      const [properties, setProperties] = useState<PropsOfProperties[] | []>(initialData.properties);
       const [error, setError] = useState<string>("");
-      const [isFormModified, setIsFormModified] = useState<boolean>(false);
+      const [success, setSuccess] = useState<string>("");
       const [isPending, setIsPending] = useState<boolean>(false);
 
       const [transitioning, startTransition] = useTransition();
+
+      const { categories } = useCategoryData();
+
+      const {
+            uploadedFiles,
+            isUploadingFiles,
+            errorUploadFiles,
+            setErrorUploadFiles,
+            handleUploadFiles,
+            setUploadedFiles,
+            removeFile
+      } = useUploadedFiles();
+
+      useEffect(() => {
+            if (initialData.images.length > 0) {
+                  setUploadedFiles(initialData.images)
+            };
+      }, []);
 
       const form = useForm<z.infer<typeof ProductSchema>>({
             resolver: zodResolver(ProductSchema),
             defaultValues: { ...initialData },
       });
 
-      useEffect(() => {
-            const isModified =
-                  form.getValues("name") !== initialData.name ||
-                  form.getValues("price") !== initialData.price ||
-                  form.getValues("description") !== initialData.description
+      const onSubmit = (values: z.infer<typeof ProductSchema>) => {
+            setIsPending(true);
 
-            setIsFormModified(isModified);
-      }, [form, initialData]);
+            if (uploadedFiles.length === 0) {
+                  setIsPending(false);
+                  setError("Por favor, insira fotos do produto. Clique no botão upload para adicionar fotos.");
+                  return;
+            }
+
+            values.images = uploadedFiles;
+            values.properties = properties;
+
+            startTransition(() => {
+                  updateProduct(values, product.id)
+                        .then((data) => {
+                              if (data?.error) {
+                                    setError(data.error);
+                              } else if (data?.success) {
+                                    setSuccess(data.success);
+                              }
+                        })
+                        .catch((error) => {
+                              setError("Erro ao enviar o formulário.");
+                              console.error("Erro ao enviar o formulário:", error);
+                        })
+                        .finally(() => {
+                              setIsPending(false);
+                        });
+            });
+      };
+
+      const cleanMessages = () => {
+            form.clearErrors();
+            setSuccess("");
+            setError("");
+      };
+
+      const addProperty = () => {
+            setProperties((prev: PropsOfProperties[]) => {
+                  return [...prev, { name: '', values: [] }];
+            })
+      }
+
+      const removeProperty = (indexToRemove: number) => {
+            setProperties((prev) => prev.filter((_, index) => index !== indexToRemove));
+      };
+
+      const handlePropertyNameChange = (index: number, newName: string) => {
+            setProperties((prev) => {
+                  const updatedProperties = [...prev];
+                  updatedProperties[index].name = newName;
+                  return updatedProperties;
+            });
+      };
+
+      const handlePropertyValuesChange = (index: number, newValues: string) => {
+            // Divide a string 'newValues' usando vírgulas como separadores e remove espaços extras
+            const valuesArray = newValues ? newValues.split(',').map((value) => value.trim()) : [];
+
+            // Atualiza a propriedade no estado 'properties'
+            setProperties((prev) => {
+                  const updatedProperties = [...prev];
+                  // Atualiza os valores da propriedade correspondente ao índice
+                  updatedProperties[index].values = valuesArray; // 'values' é um array
+                  return updatedProperties;
+            });
+      };
 
       // Função para lidar com a mudança nos inputs de preço 'BRL'
       const handlePriceChange = (inputName: keyof z.infer<typeof ProductSchema>) => (
@@ -93,58 +212,6 @@ export const ProductEditForm = ({
             form.setValue(inputName, formattedValue);
       };
 
-      const {
-            uploadedFiles,
-            isUploadingFiles,
-            errorUploadFiles,
-            setErrorUploadFiles,
-            handleUploadFiles,
-            setUploadedFiles,
-            removeFile
-      } = useUploadedFiles();
-
-      useEffect(() => {
-            if (initialData.images.length > 0) {
-                  setUploadedFiles(initialData.images);
-            }
-      }, [])
-
-      const onSubmit = (values: z.infer<typeof ProductSchema>) => {
-            setIsPending(true);
-
-            startTransition(() => {
-                  if (uploadedFiles.length === 0) {
-                        setIsPending(false);
-                        setError("Por favor, insira fotos do produto. Clique no botão upload para adicionar fotos.");
-                        return;
-                  }
-
-                  values.images = uploadedFiles;
-
-                  updateProduct(values, product.id)
-                        .then((data) => {
-                              if (data?.error) {
-                                    setError(data.error);
-                              } else if (data?.success) {
-                                    setSuccess(data.success);
-                              }
-                        })
-                        .catch((error) => {
-                              setError("Erro ao enviar o formulário.");
-                              console.error("Erro ao enviar o formulário:", error);
-                        })
-                        .finally(() => {
-                              setIsPending(false);
-                        });
-            });
-      };
-
-      const cleanMessages = () => {
-            form.clearErrors();
-            setSuccess("");
-            setError("");
-      };
-
       return (
             <Flex className={`${isOpen ? "fixed" : "hidden"} modal`} >
                   <Flex className={"w-full h-full items-center justify-center"}>
@@ -168,12 +235,12 @@ export const ProductEditForm = ({
                                                       className={"flex-col overflow-auto pb-2 space-y-4 items-start"}
                                                       style={{
                                                             height: "auto",
-                                                            maxHeight: "400px",
-                                                            scrollbarWidth: "none",
+                                                            maxHeight: "420px",
+                                                            paddingInline: "5px"
                                                       }}
                                                 >
                                                       <div className="w-full space-y-1">
-                                                            <h3 className="text-tremor-label font-bold text-slate-800">Digite o Nome do Produto</h3>
+                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Digite o Nome do Produto</h3>
                                                             <TextInput
                                                                   className="defaultInput"
                                                                   type={"text"}
@@ -183,12 +250,34 @@ export const ProductEditForm = ({
                                                                   error={form.formState.errors.name ? (true) : (false)}
                                                                   errorMessage={"Este campo é obrigatório"}
                                                                   disabled={isUploadingFiles || isPending}
+                                                                  autoComplete={"off"}
                                                                   defaultValue={initialData.name}
                                                             />
                                                       </div>
+                                                      <div className="w-full space-y-1">
+                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Selecione uma Categoria</h3>
+                                                            <Select
+                                                                  className="border border-slate-300 rounded-tremor-default"
+                                                                  name={"category"}
+                                                                  onValueChange={(value: string) => {
+                                                                        const selectedCategory = categories.find((cat) => cat.id === value);
+                                                                        form.setValue("categoryId", value);
+                                                                        form.setValue("categoryName", selectedCategory ? selectedCategory.name : "");
+                                                                  }}
+                                                                  placeholder="Clique para selecionar"
+                                                                  defaultValue={initialData.categoryId}
+                                                            >
+                                                                  {categories.map((category) => (
+                                                                        <SelectItem key={category.id} value={category.id}>
+                                                                              {category.name}
+                                                                        </SelectItem>
+                                                                  ))}
+                                                            </Select>
+
+                                                      </div>
 
                                                       <div className="w-full space-y-1">
-                                                            <h3 className="text-tremor-label font-bold text-slate-800">Insira o Valor de Venda</h3>
+                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Insira o Valor de Venda</h3>
                                                             <TextInput
                                                                   className="defaultInput"
                                                                   type={"text"}
@@ -196,14 +285,14 @@ export const ProductEditForm = ({
                                                                   placeholder={"R$ 0,00"}
                                                                   onChange={handlePriceChange('price')}
                                                                   error={form.formState.errors.price ? (true) : (false)}
-                                                                  errorMessage={form.formState.errors.description?.message}
+                                                                  errorMessage={"Este campo é obrigatório"}
                                                                   disabled={isUploadingFiles || isPending}
                                                                   defaultValue={initialData.price}
                                                             />
                                                       </div>
 
                                                       <div className="w-full space-y-1">
-                                                            <h3 className="text-tremor-label font-bold text-slate-800">Fotos do Produto</h3>
+                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-1 mb-2">Fotos do Produto</h3>
                                                             <div className="flex flex-wrap items-center" style={{ gap: "10px" }}>
                                                                   {!!uploadedFiles?.length && uploadedFiles?.map((link, index) => (
                                                                         <div className="relative" key={index}>
@@ -258,14 +347,52 @@ export const ProductEditForm = ({
                                                       </div>
 
                                                       <div className="w-full space-y-1">
-                                                            <h3 className="text-tremor-label font-bold text-slate-800">Descreva o produto</h3>
+                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-2">Propriedades</h3>
+                                                            {properties.length > 0 && properties.map((property, index) => (
+                                                                  <Flex className="items-start space-x-2" key={index}>
+                                                                        <Flex className="sm:flex-row flex-col" style={{ gap: '5px' }}>
+                                                                              <TextInput
+                                                                                    className="max-w-sm"
+                                                                                    type="text"
+                                                                                    value={property.name}
+                                                                                    onChange={e => handlePropertyNameChange(index, e.target.value)}
+                                                                                    placeholder="Nome da propriedade (ex: cor)"
+                                                                              />
+                                                                              <TextInput
+                                                                                    className="max-w-sm"
+                                                                                    type="text"
+                                                                                    value={property.values.join(', ')}
+                                                                                    onChange={e => handlePropertyValuesChange(index, e.target.value)}
+                                                                                    placeholder="Valores separados por vírgula"
+                                                                              />
+                                                                        </Flex>
+                                                                        <Button
+                                                                              icon={BsTrashFill}
+                                                                              type="button"
+                                                                              className="text-white bg-slate-400 hover:bg-slate-500 border-slate-500 transition-all duration-300 hover:border-slate-500"
+                                                                              onClick={() => removeProperty(index)}
+                                                                        />
+                                                                  </Flex>
+                                                            ))}
+                                                            <Button
+                                                                  onClick={addProperty}
+                                                                  type="button"
+                                                                  className="p-2"
+                                                                  variant="light"
+                                                            >
+                                                                  + Adicione propriedades
+                                                            </Button>
+                                                      </div>
+
+                                                      <div className="w-full space-y-1">
+                                                            <h3 className="text-tremor-label font-bold text-slate-800 ml-2">Descreva o produto</h3>
                                                             <Textarea
                                                                   className="defaultInput"
                                                                   name={"description"}
                                                                   placeholder={"Digite uma descrição curta e informativa do produto..."}
                                                                   onChange={(e) => form.setValue("description", e.target.value)}
                                                                   error={form.formState.errors.description ? (true) : (false)}
-                                                                  errorMessage={form.formState.errors.description?.message}
+                                                                  errorMessage={"Este campo é obrigatório"}
                                                                   disabled={isUploadingFiles || isPending}
                                                                   rows={4}
                                                                   maxLength={124}
@@ -332,9 +459,12 @@ export const ProductEditForm = ({
                                                             <Flex className="justify-start space-x-2">
                                                                   <Button
                                                                         type={"button"}
-                                                                        onClick={() => setSuccess("")}
+                                                                        onClick={() => {
+                                                                              setSuccess("")
+                                                                              setUploadedFiles([]);
+                                                                        }}
                                                                   >
-                                                                        Editar Novamente
+                                                                        Cadastrar Novo Produto
                                                                   </Button>
                                                                   <Button
                                                                         type={"button"}
@@ -346,22 +476,13 @@ export const ProductEditForm = ({
                                                             </Flex>
                                                       </Flex>
                                                 ) : (
-                                                      <Flex className="justify-start space-x-2">
-                                                            <Button
-                                                                  type={"submit"}
-                                                                  disabled={isUploadingFiles || isPending}
-                                                            >
-                                                                  Salvar Edição
-                                                            </Button>
-                                                            <Button
-                                                                  type={"button"}
-                                                                  variant="secondary"
-                                                                  onClick={onClose}
-                                                                  disabled={isUploadingFiles || isPending}
-                                                            >
-                                                                  Cancelar
-                                                            </Button>
-                                                      </Flex>
+                                                      <Button
+                                                            className="w-full"
+                                                            type={"submit"}
+                                                            disabled={isUploadingFiles || isPending}
+                                                      >
+                                                            Salvar Cadastro
+                                                      </Button>
                                                 )}
                                           </Flex>
                                     </form>

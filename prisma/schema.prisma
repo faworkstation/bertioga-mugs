@@ -56,25 +56,24 @@ model Product {
   name        String
   images      String[]
   description String
-  
+
   properties Json?
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
 
-  Category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?
+  Category     Category? @relation(fields: [categoryId], references: [id])
+  categoryId   String?
   categoryName String?
 }
 
 model Category {
-  id      String  @id @default(uuid())
-  name    String  @unique
-  parent  String?
-  userId  String?
-  user    User?   @relation(fields: [userId], references: [id])
-  
-  properties Json?
+  id     String  @id @default(uuid())
+  name   String  @unique
+  parent String?
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
 
   Product Product[]
 }
