@@ -7,7 +7,6 @@ import { useState, useTransition } from "react"
 import { BsFillLayersFill, BsXCircle } from "react-icons/bs";
 
 import { CategorySchema } from "@/schemas";
-import { Category } from "@prisma/client";
 
 import {
       Button,
@@ -29,8 +28,12 @@ import { updateCategory } from "@/database/update/update-category";
 
 interface CategoryEditFormProps {
       isOpen: boolean;
-      category: Category;
       onClose: () => void;
+      category: {
+            id: string;
+            name: string;
+            parent: string | null;
+      };
 };
 
 export const CategoryEditForm = ({ isOpen, category, onClose, }: CategoryEditFormProps) => {
