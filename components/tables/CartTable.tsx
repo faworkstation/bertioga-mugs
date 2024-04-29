@@ -69,7 +69,7 @@ export const CartTable = ({
                                           </TableHead>
                                           <TableBody>
                                                 {products.map(product => (
-                                                      <TableRow className=" text-slate-800">
+                                                      <TableRow key={product.id} className=" text-slate-800">
                                                             <TableCell>
                                                                   <Flex className="justify-start space-x-4">
                                                                         <div style={{ width: "60px" }}>
