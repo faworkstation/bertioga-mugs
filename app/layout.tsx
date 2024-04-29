@@ -3,6 +3,7 @@ import { SessionProvider } from "next-auth/react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { auth } from "@/auth";
+import { CartContextProvider } from "@/components/CartContext";
 import { Header } from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,8 +24,10 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="pt-BR">
         <body className={inter.className}>
-          <Header />
-          {children}
+          <CartContextProvider>
+            <Header />
+            {children}
+          </CartContextProvider>
         </body>
       </html>
     </SessionProvider>

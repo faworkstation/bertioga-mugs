@@ -1,7 +1,9 @@
+import { FeaturedProduct } from "@/components/FeaturedProduct";
+
 export default function Home() {
   return (
-    <div>
-      Home Page
-    </div>
+    <>
+      <FeaturedProduct />
+    </>
   );
 }

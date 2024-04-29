@@ -72,3 +72,15 @@ export const CategorySchema = z.object({
       name: z.string().min(1, { message: "Este campo é obrigatório" }),
       parent: z.string().optional(),
 });
+
+export const OrderSchema = z.object({
+      line_items: z.object({}).optional(),
+      name: z.string().min(1, { message: "Este campo é obrigatório" }),
+      email: z.string().email(),
+      city: z.string().min(1, { message: "Este campo é obrigatório" }),
+      cep: z.string().min(1, { message: "Este campo é obrigatório" }),
+      street: z.string().min(1, { message: "Este campo é obrigatório" }),
+      phone: z.string().min(1, { message: "Este campo é obrigatório" }),
+      cartProducts: z.array(z.string()), 
+      paid: z.boolean(),
+});

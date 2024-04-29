@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Product } from "@prisma/client";
-import { getAllProducts } from "@/database/read/get-products";
+import { getAllProducts, getProductById } from "@/database/read/get-products";
 
 export const useProductData = () => {
       const [products, setProducts] = useState<Product[] | []>([]);
@@ -24,4 +24,26 @@ export const useProductData = () => {
       }, []);
 
       return { products };
+};
+
+export const useProductDataById = (productId: string) => {
+      const [product, setProduct] = useState<Product | null>(null);
+
+      const fetchOneProduct = async () => {
+            try {
+                  const productFound = await getProductById(productId);
+
+                  if (productFound) {
+                        setProduct(productFound);
+                  };
+            } catch (error) {
+                  console.error("Ops! Ocorreu um erro ao buscar o produto:", error);
+            };
+      };
+
+      useEffect(() => {
+            fetchOneProduct();
+      }, []);
+
+      return { product };
 };

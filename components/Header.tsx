@@ -6,8 +6,18 @@ import { BsCart, BsPerson, BsSearch, } from "react-icons/bs";
 import { Flex } from "@tremor/react";
 import { LoginButton } from "@/components/buttons/LoginButton";
 import { MenuButton } from "./buttons/MenuButton";
+import { useContext } from "react";
+import { CartContext } from "./CartContext";
 
 export const Header = () => {
+      const cartContext = useContext(CartContext);
+
+      if (!cartContext) {
+            throw new Error("CartContext not found");
+      }
+
+      const { cartProducts } = cartContext;
+
       return (
             <Flex className="shadow-tremor-card p-4 text-sm">
                   <MenuButton />
@@ -36,7 +46,7 @@ export const Header = () => {
                               </span>
                               <Link href={"/cart"} className="flex items-center space-x-2">
                                     <BsCart size={16} />
-                                    <span> <span className="textResponsive"> Carrinho </span> (0) </span>
+                                    <span className="textResponsive">Carrinho</span> ({cartProducts.length})
                               </Link>
                               <span className="textResponsive">
                                     <LoginButton>

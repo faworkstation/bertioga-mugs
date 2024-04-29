@@ -48,6 +48,7 @@ model User {
   accounts Account[]
   Product  Product[]
   Category Category[]
+  Order    Order[]
 }
 
 model Product {
@@ -76,6 +77,24 @@ model Category {
   user   User?   @relation(fields: [userId], references: [id])
 
   Product Product[]
+}
+
+model Order {
+  id         Int     @id @default(autoincrement())
+  line_items Json
+  name       String
+  email      String
+  city       String
+  cep        String
+  street     String
+  phone      String
+  paid       Boolean
+
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+    
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {

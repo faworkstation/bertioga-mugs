@@ -339,7 +339,7 @@ export const ProductRegisterForm = ({
                                                                   errorMessage={"Este campo é obrigatório"}
                                                                   disabled={isUploadingFiles || isPending}
                                                                   rows={4}
-                                                                  maxLength={124}
+                                                                  maxLength={200}
                                                             />
                                                       </div>
                                                 </Flex>
