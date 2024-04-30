@@ -1,16 +1,16 @@
 "use client";
-import * as z from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useForm } from "react-hook-form"
-import React, { useState, useTransition } from "react"
-import { Button, Callout, Flex, Text, TextInput } from "@tremor/react"
-import { WrapperForm } from "@/components/forms/WrapperForm"
-import { loginSession } from "@/database/create/login-session";
-import { LoginSchema } from "@/schemas";
-import { SyncLoading } from "../loadings/SyncLoading";
-import Link from "next/link";
 
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useForm } from "react-hook-form";
+import React, { useState, useTransition } from "react";
+import Link from "next/link";;
+import { LoginSchema } from "@/schemas";;
+import { Button, Callout, Divider, Flex, Text, TextInput } from "@tremor/react";
+import { WrapperForm } from "@/components/forms/WrapperForm";
+import { SyncLoading } from "@/components/loadings/SyncLoading";
+import { loginSession } from "@/actions/create/login-session";
 
 export const UserLoginForm = () => {
       const [error, setError] = useState<string>("");
@@ -20,6 +20,7 @@ export const UserLoginForm = () => {
       const [isPending, startTransition] = useTransition();
 
       const searchParams = useSearchParams();
+
       const callbackUrl = searchParams.get("callbackUrl");
 
       const router = useRouter();
@@ -52,9 +53,9 @@ export const UserLoginForm = () => {
       };
 
       const cleanMessages = () => {
-            setError("")
-            setSuccess("")
-            form.clearErrors()
+            form.clearErrors();
+            setSuccess("");
+            setError("");
       };
 
       return (
@@ -92,6 +93,7 @@ export const UserLoginForm = () => {
                                           disabled={isPending}
                                           autoComplete={"off"}
                                     />
+
                                     <TextInput
                                           type={"password"}
                                           name={"password"}
@@ -102,6 +104,7 @@ export const UserLoginForm = () => {
                                           disabled={isPending}
                                           autoComplete={"off"}
                                     />
+
                                     {!isPending && (
                                           <Button
                                                 type={"button"}
@@ -117,6 +120,8 @@ export const UserLoginForm = () => {
                                     )}
                               </Flex>
                         )}
+
+                        <Divider />
 
                         <Flex flexDirection={"col"} >
                               {isPending ? (

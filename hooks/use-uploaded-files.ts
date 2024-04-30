@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, useState } from "react";
-import { uploadFiles } from "@/database/upload/upload-files";
+import { uploadFiles } from "@/actions/upload/upload-files";
 
 const useUploadedFiles = () => {
       const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
@@ -10,10 +10,9 @@ const useUploadedFiles = () => {
 
       const handleUploadFiles = async (event: ChangeEvent<HTMLInputElement>) => {
             event.preventDefault();
+            setIsUploadingFiles(true);
 
-            if (!event.target.files) {
-                  return;
-            }
+            if (!event.target.files) return;
 
             const formData = new FormData();
             const files = Array.from(event.target.files);
@@ -24,13 +23,9 @@ const useUploadedFiles = () => {
             if (currentFileCount + files.length > maxFiles) {
                   setErrorUploadFiles(`Você só pode carregar até ${maxFiles} fotos. Você já tem ${currentFileCount}.`);
                   return;
-            }
+            };
 
-            files.forEach((file) => {
-                  formData.append("file", file);
-            });
-
-            setIsUploadingFiles(true);
+            files.forEach((file) => { formData.append("file", file); });
 
             try {
                   const uploadedLinks = await uploadFiles(formData);
@@ -41,7 +36,7 @@ const useUploadedFiles = () => {
                   setErrorUploadFiles("Falha ao carregar arquivos. Por favor, tente novamente.");
             } finally {
                   setIsUploadingFiles(false);
-            }
+            };
       };
 
       const removeFile = (index: number) => {

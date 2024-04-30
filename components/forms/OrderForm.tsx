@@ -3,12 +3,12 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { OrderSchema } from "@/schemas";
 import { Button, Callout, Card, Divider, Flex, TextInput, Title } from "@tremor/react";
 import React, { useState, useTransition } from "react";
-import { SyncLoading } from "../loadings/SyncLoading";
-import { AnimBottomToTop } from "../animations/AnimBottomToTop";
-import { registerOrder } from "@/database/create/register-order";
-import { OrderSchema } from "@/schemas";
+import { SyncLoading } from "@/components/loadings/SyncLoading";
+import { AnimBottomToTop } from "@/components/animations/AnimBottomToTop";
+import { registerOrder } from "@/actions/create/register-order";
 
 interface OrderFormProps {
       cartProducts: string[];
@@ -183,7 +183,7 @@ export const OrderForm = ({ cartProducts, clearCart }: OrderFormProps) => {
                                     </Flex>
                               ) : (
                                     <Button
-                                          className="w-full"
+                                          className={"w-full bg-slate-800 hover:bg-slate-900 border-slate-950 hover:border-slate-900"}
                                           type={"submit"}
                                           disabled={isPending}
                                     >
@@ -193,5 +193,5 @@ export const OrderForm = ({ cartProducts, clearCart }: OrderFormProps) => {
                         </Flex>
                   </form>
             </Card>
-      )
-}
+      );
+};

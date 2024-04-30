@@ -1,28 +1,13 @@
-import { BsPencilSquare, BsTrashFill } from "react-icons/bs";
 import { Order } from "@prisma/client";
-
-import {
-      Button,
-      Card,
-      Flex,
-      Table,
-      TableBody,
-      TableCell,
-      TableHead,
-      TableHeaderCell,
-      TableRow
-} from "@tremor/react";
+import { Card, Flex, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 
 type OrderTableProps = {
       orders: Order[];
-}
+};
 
-export const OrderTable = ({
-      orders,
-}: OrderTableProps) => {
+export const OrderTable = ({ orders }: OrderTableProps) => {
       return (
             <Flex className="flex-col items-start">
-                  <h2 className="sr-only">Lista de Pedidos</h2>
                   <Card
                         className={"mx-auto flex-col overflow-auto pb-2 space-y-4 items-start"}
                         style={{
@@ -36,7 +21,7 @@ export const OrderTable = ({
                                     <TableRow>
                                           <TableHeaderCell>Data</TableHeaderCell>
                                           <TableHeaderCell>Remetente</TableHeaderCell>
-                                          <TableHeaderCell>Produto</TableHeaderCell>a
+                                          <TableHeaderCell>Produto</TableHeaderCell>
                                     </TableRow>
                               </TableHead>
                               <TableBody>
@@ -58,8 +43,7 @@ export const OrderTable = ({
                                                       <TableCell>
                                                             {Array.isArray(order.line_items) ? (
                                                                   order.line_items.map((lineItem: any, index: number) => {
-                                                                        const productName =
-                                                                              lineItem?.price_data?.product_data?.name ?? 'Desconhecido';
+                                                                        const productName = lineItem?.price_data?.product_data?.name ?? 'Desconhecido';
                                                                         const quantity = lineItem?.quantity ?? 0;
 
                                                                         return (

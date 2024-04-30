@@ -13,7 +13,7 @@ export const getAllOrders = async () => {
       }
 };
 
-export const getOrderById = async (id: number | undefined) => {
+export const getOrderById = async (id: string | undefined) => {
       try {
             const order = await db.order.findUnique({ where: { id } });
             return order;

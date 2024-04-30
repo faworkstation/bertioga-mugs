@@ -1,11 +1,10 @@
-import NextAuth from 'next-auth';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import { UserRole } from '@prisma/client'
-
-import authConfig from '@/auth.config';
-import { db } from './libs/db';
-import { getUserById } from './database/read/get-users';
-import { getTwoFactorConfirmationByUserId } from './database/read/get-two-factor';
+import NextAuth from "next-auth";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import authConfig from "@/auth.config";
+import { UserRole } from "@prisma/client"
+import { db } from "./libs/db";
+import { getUserById } from "@/actions/read/get-users";
+import { getTwoFactorConfirmationByUserId } from "@/actions/read/get-two-factor";
 
 export const {
       handlers: { GET, POST },
@@ -35,7 +34,7 @@ export const {
                   // Prevent sign in without email verification
                   if (!existingUser?.emailVerified) {
                         return false;
-                  }
+                  };
 
                   if (existingUser?.isTwoFactorEnabled) {
                         const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id);
@@ -46,20 +45,19 @@ export const {
                         await db.twoFactorConfirmation.delete({
                               where: { id: twoFactorConfirmation.id }
                         });
-                  }
+                  };
 
                   return true;
-
             },
 
             async session({ token, session }) {
                   if (token.sub && session.user) {
                         session.user.id = token.sub;
-                  }
+                  };
 
                   if (token.role && session.user) {
                         session.user.role = token.role as UserRole;
-                  }
+                  };
 
                   return session;
             },
@@ -71,12 +69,12 @@ export const {
 
                   if (existingUser) {
                         token.role = existingUser.role;
-                  }
+                  };
 
                   return token;
-            }
+            },
       },
       adapter: PrismaAdapter(db),
-      session: { strategy: 'jwt' },
+      session: { strategy: "jwt" },
       ...authConfig,
 });

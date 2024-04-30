@@ -7,40 +7,26 @@ import { useState, useTransition } from "react"
 import { BsFillBoxSeamFill, BsTrash, BsTrashFill, BsUpload, BsXCircle } from "react-icons/bs";
 import { ProductSchema } from "@/schemas";
 import Image from "next/image";
-
-import {
-      Button,
-      Callout,
-      Card,
-      Divider,
-      Flex,
-      Select,
-      SelectItem,
-      TextInput,
-      Textarea
-} from "@tremor/react";
-
+import { Button, Callout, Card, Divider, Flex, Select, SelectItem, TextInput, Textarea } from "@tremor/react";
 import { AnimBottomToTop } from "@/components/animations/AnimBottomToTop"
 import { BounceLoading } from "@/components/loadings/BounceLoading";
 import { HeaderForm } from "@/components/forms/HeaderForm";
 import { SyncLoading } from "@/components/loadings/SyncLoading"
-
 import useUploadedFiles from "@/hooks/use-uploaded-files";
-import { registerProduct } from "@/database/create/register-product";
 import { useCategoryData } from "@/hooks/use-category-data";
+import { registerProduct } from "@/actions/create/register-product";
 
 interface CategoryProperty {
       name: string;
       values: string[];
-}[]
+}[];
 
-export const ProductRegisterForm = ({
-      isOpen,
-      onClose,
-}: {
-      isOpen: boolean
-      onClose: () => void
-}) => {
+interface ProductRegisterFormProps {
+      isOpen: boolean;
+      onClose: () => void;
+};
+
+export const ProductRegisterForm = ({ isOpen, onClose, }: ProductRegisterFormProps) => {
       const [properties, setProperties] = useState<CategoryProperty[] | []>([]);
       const [success, setSuccess] = useState<string>("");
       const [error, setError] = useState<string>("");
@@ -98,11 +84,11 @@ export const ProductRegisterForm = ({
                   setIsPending(false);
                   setError("Por favor, insira fotos do produto. Clique no botão upload para adicionar fotos.");
                   return;
-            }
+            };
 
             values.images = uploadedFiles;
             values.properties = properties;
-            
+
             setIsPending(true);
 
             startTransition(() => {
@@ -130,12 +116,11 @@ export const ProductRegisterForm = ({
             setError("");
       };
 
-
       const addProperty = () => {
             setProperties((prev: CategoryProperty[]) => {
                   return [...prev, { name: '', values: [] }];
             })
-      }
+      };
 
       const removeProperty = (indexToRemove: number) => {
             setProperties((prev) => prev.filter((_, index) => index !== indexToRemove));
@@ -172,9 +157,7 @@ export const ProductRegisterForm = ({
                                           title={"Cadastro de Produto"}
                                           description={!success ? ("Preencha o formulário abaixo para cadastrar um produto") : ("")}
                                     />
-
-                                    <Divider className="mt-2" style={{ marginBlock: "10px" }} />
-
+                                    <Divider />
                                     <form
                                           className={"w-full flex flex-col items-center justify-center"}
                                           onSubmit={form.handleSubmit(onSubmit)}
@@ -345,7 +328,7 @@ export const ProductRegisterForm = ({
                                                 </Flex>
                                           )}
 
-                                          {!success && <Divider className="mt-2" style={{ marginBlock: "10px" }} />}
+                                          {!success && <Divider />}
 
                                           <Flex flexDirection="col" >
                                                 {isPending && !success ? (
@@ -419,13 +402,21 @@ export const ProductRegisterForm = ({
                                                             </Flex>
                                                       </Flex>
                                                 ) : (
-                                                      <Button
-                                                            className="w-full"
-                                                            type={"submit"}
-                                                            disabled={isUploadingFiles || isPending}
-                                                      >
-                                                            Salvar Cadastro
-                                                      </Button>
+                                                      <Flex className="justify-start space-x-2">
+                                                            <Button
+                                                                  type={"submit"}
+                                                                  disabled={isUploadingFiles || isPending}
+                                                            >
+                                                                  Salvar Cadastro
+                                                            </Button>
+                                                            <Button
+                                                                  type={"button"}
+                                                                  variant="secondary"
+                                                                  onClick={onClose}
+                                                            >
+                                                                  Cancelar
+                                                            </Button>
+                                                      </Flex>
                                                 )}
                                           </Flex>
                                     </form>

@@ -3,15 +3,14 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import React, { useState, useTransition } from "react"
+import { useState, useTransition } from "react";
+import Link from "next/link";
 import { UserRegisterSchema } from "@/schemas";
-
 import { Button, Callout, Divider, Flex, Text, TextInput } from "@tremor/react"
 import { WrapperForm } from "@/components/forms/WrapperForm"
 import { SyncLoading } from "@/components/loadings/SyncLoading";
 
-import { registerUser } from "@/database/create/register-users";
-import Link from "next/link";
+import { registerUser } from "@/actions/create/register-users";
 
 export const UserRegisterForm = () => {
       const [error, setError] = useState<string>("");
@@ -119,6 +118,8 @@ export const UserRegisterForm = () => {
                               </Flex>
                         )}
 
+                        <Divider />
+
                         <Flex flexDirection={"col"} >
                               {isPending ? (
                                     <SyncLoading />
@@ -157,7 +158,7 @@ export const UserRegisterForm = () => {
                         <Text className="text-center flex space-x-2">
                               <span> Já possui uma conta? </span>
                               <Link href={"/auth/login"} className='text-tremor-default text-blue-600 underline'>
-                                   Faça o Login
+                                    Faça o Login
                               </Link>
                         </Text>
                   )}

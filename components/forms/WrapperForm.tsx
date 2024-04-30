@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Flex, Subtitle, Text, } from "@tremor/react";
 import { AnimBottomToTop } from "@/components/animations/AnimBottomToTop";
-import { Doubts } from "@/components/Doubts";
+import { Doubts } from "@/components/footers/Doubts";
 
 type Props = {
       titleForm: string;

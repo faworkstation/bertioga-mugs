@@ -20,20 +20,22 @@ export default auth((req) => {
 
       if (isApiAuthRoute) {
             return;
-      }
+      };
 
       if (isAuthRoute) {
             if (isLoggedIn) {
                   return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl))
-            }
+            };
+
             return;
-      }
+      };
 
       if (!isLoggedIn && !isPublicRoute) {
             let callbackUrl = nextUrl.pathname;
+
             if (nextUrl.search) {
                   callbackUrl += nextUrl.search;
-            }
+            };
 
             const encodedCallbackUrl = encodeURIComponent(callbackUrl);
 
@@ -49,4 +51,4 @@ export default auth((req) => {
 // Optionally, don't invoke Middleware on some paths
 export const config = {
       matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
-}
+};

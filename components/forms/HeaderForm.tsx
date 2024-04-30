@@ -1,15 +1,12 @@
-import React from 'react';
-import { Flex, Subtitle } from '@tremor/react'
+import { Flex } from "@tremor/react";
 
-export const HeaderForm = ({
-      icon: IconComponent,
-      title,
-      description,
-}: {
+interface HeaderFormProps {
       icon?: React.ComponentType<{ size?: number }>;
       title: string;
       description: string;
-}) => {
+};
+
+export const HeaderForm = ({ icon: IconComponent, title, description, }: HeaderFormProps) => {
       const iconSize = 16;
 
       return (

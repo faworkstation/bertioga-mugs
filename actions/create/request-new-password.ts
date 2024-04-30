@@ -3,13 +3,13 @@
 import * as z from "zod";
 import { ResetSchema } from "@/schemas";
 import { sendPasswordResetEmail } from "@/libs/mail";
-import { generatePasswordResetToken } from "@/database/create/generate-tokens";
-import { getUserByEmail } from "@/database/read/get-users";
+import { generatePasswordResetToken } from "@/actions/create/generate-tokens";
+import { getUserByEmail } from "@/actions/read/get-users";
 
-type RequestPasswordResponse = {
+interface RequestPasswordResponse {
       success?: string;
       error?: string;
-}
+};
 
 export const handleRequestNewPassword = async (values: z.infer<typeof ResetSchema>): Promise<RequestPasswordResponse> => {
       const validatedFields = ResetSchema.safeParse(values);
@@ -34,10 +34,7 @@ export const handleRequestNewPassword = async (values: z.infer<typeof ResetSchem
 export const sendResetPasswordoken = async (email: string) => {
       const passwordResetToken = await generatePasswordResetToken(email)
 
-      await sendPasswordResetEmail(
-            passwordResetToken.email,
-            passwordResetToken.token,
-      )
+      await sendPasswordResetEmail(passwordResetToken.email, passwordResetToken.token);
 
       return { success: "Email para redefinição de senha enviado. Por favor, verifique sua caixa de entrada e siga as instruções para redifinir sua senha." }
 }

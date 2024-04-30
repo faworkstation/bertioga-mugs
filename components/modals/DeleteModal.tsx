@@ -2,23 +2,18 @@
 
 import { useState } from "react";
 import { BsExclamationTriangleFill, BsXCircle } from "react-icons/bs";
-
 import { Button, Callout, Card, Flex, } from "@tremor/react";
-
 import { AnimBottomToTop } from "@/components/animations/AnimBottomToTop";
 import { SyncLoading } from "@/components/loadings/SyncLoading";
 
-export const DeleteModal = ({
-      isOpen,
-      onClose,
-      idToDeleteData,
-      deleteFunction,
-}: {
+interface DeleteModalProps {
       idToDeleteData: string;
       isOpen: boolean;
       onClose: () => void;
       deleteFunction: (id: string) => Promise<{ success: string, error: string }>;
-}) => {
+};
+
+export const DeleteModal = ({ isOpen, onClose, idToDeleteData, deleteFunction }: DeleteModalProps) => {
       const [success, setSuccess] = useState<string>("");
       const [error, setError] = useState<string>("");
 
@@ -32,11 +27,10 @@ export const DeleteModal = ({
 
                   if (result.success) {
                         setSuccess(result.success);
-                  };
-
-                  if (result.error) {
+                  } else if (result.error) {
                         setError(result.error)
                   };
+
             } catch (error) {
                   if (error) {
                         setError("Ops! Ocorreu um erro interno do servidor. Por favor, verifique a situação e tente novamente.")
@@ -49,14 +43,14 @@ export const DeleteModal = ({
       return (
             <Flex className={`${isOpen ? "fixed" : "hidden"} modal`} >
                   <AnimBottomToTop>
-                        <Flex className={"w-full h-full items-center justify-center"}>
-                              <Card className={"max-w-lg p-4"}>
+                        <Flex className="w-full h-full items-center justify-center">
+                              <Card className="max-w-lg p-4">
                                     {!success && (
                                           <h1
-                                                className={"w-full bg-slate-100 p-2 rounded-tremor-small flex items-center text-tremor-title"}
+                                                className="w-full bg-slate-100 p-2 rounded-tremor-small flex items-center text-tremor-title"
                                                 style={{ gap: "10px", marginTop: "20px" }}
                                           >
-                                                <BsExclamationTriangleFill className={"text-red-500"} size={26} />
+                                                <BsExclamationTriangleFill className="text-red-500" size={26} />
                                                 Atenção!
                                           </h1>
                                     )}
@@ -75,29 +69,22 @@ export const DeleteModal = ({
                                     {!isPending && !success && !error ? (
                                           <Flex className={"justify-start space-x-2 mt-4"}>
                                                 <Button
-                                                      className={"rounded-tremor-small bg-red-400 hover:bg-red-500 border-red-400 hover:border-red-500 text-white hover:text-white"}
+                                                      className="rounded-tremor-small bg-red-400 hover:bg-red-500 border-red-400 hover:border-red-500 text-white hover:text-white"
                                                       onClick={handleDeleteData}
                                                 >
                                                       Sim, Excluir
                                                 </Button>
-
                                                 <Button variant={"secondary"} onClick={onClose}>
                                                       Cancelar
                                                 </Button>
                                           </Flex>
-                                    ) : isPending ? (
+                                    ) : isPending && (
                                           <SyncLoading />
-                                    ) : success && (
-                                          <Flex>
-                                                <Button className={"w-full mt-4"} onClick={onClose}>
-                                                      OK
-                                                </Button>
-                                          </Flex>
                                     )}
 
                                     {!isPending && (
                                           < Button
-                                                className={"closeButton hover:text-white"}
+                                                className="closeButton hover:text-white"
                                                 icon={BsXCircle}
                                                 size={"lg"}
                                                 variant={"light"}

@@ -6,24 +6,12 @@ import { useForm } from "react-hook-form";
 import { useState, useTransition } from "react"
 import { BsFillLayersFill, BsXCircle } from "react-icons/bs";
 import { CategorySchema } from "@/schemas";
-
-import {
-      Button,
-      Callout,
-      Card,
-      Divider,
-      Flex,
-      Select,
-      SelectItem,
-      TextInput,
-} from "@tremor/react";
-
+import { Button, Callout, Card, Divider, Flex, Select, SelectItem, TextInput, } from "@tremor/react";
 import { AnimBottomToTop } from "@/components/animations/AnimBottomToTop"
 import { HeaderForm } from "@/components/forms/HeaderForm";
 import { SyncLoading } from "@/components/loadings/SyncLoading"
-
 import { useCategoryData } from "@/hooks/use-category-data";
-import { registerCategory } from "@/database/create/register-category";
+import { registerCategory } from "@/actions/create/register-category";
 
 interface CategoryFormProps {
       isOpen: boolean;
@@ -82,18 +70,14 @@ export const CategoryRegisterForm = ({ isOpen, onClose, }: CategoryFormProps) =>
                                           title={"Registro de Categoria"}
                                           description={!success ? ("Preencha o formulário abaixo para registrar uma categoria") : ("")}
                                     />
-
-                                    <Divider className="mt-2" style={{ marginBlock: "10px" }} />
-
+                                    <Divider />
                                     <form
                                           className={"w-full flex flex-col items-center justify-center"}
                                           onSubmit={form.handleSubmit(onSubmit)}
                                           onChange={cleanMessages}
                                     >
                                           {!success && (
-                                                <Flex
-                                                      className={"flex-col pb-2 space-y-4 items-start justify-start"}
-                                                >
+                                                <Flex className={"flex-col pb-2 space-y-4 items-start justify-start"} >
                                                       <div className="w-full space-y-1">
                                                             <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Digite o Nome da Categoria</h3>
                                                             <TextInput
@@ -108,6 +92,7 @@ export const CategoryRegisterForm = ({ isOpen, onClose, }: CategoryFormProps) =>
                                                                   autoComplete={"off"}
                                                             />
                                                       </div>
+
                                                       <div className="w-full space-y-1">
                                                             <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Selecione uma Subcategoria</h3>
                                                             <Select
@@ -130,7 +115,7 @@ export const CategoryRegisterForm = ({ isOpen, onClose, }: CategoryFormProps) =>
                                                 </Flex>
                                           )}
 
-                                          {!success && <Divider className="mt-2" style={{ marginBlock: "10px" }} />}
+                                          {!success && <Divider />}
 
                                           <Flex flexDirection="col" >
                                                 {isPending && !success ? (
@@ -140,7 +125,7 @@ export const CategoryRegisterForm = ({ isOpen, onClose, }: CategoryFormProps) =>
                                                             <AnimBottomToTop>
                                                                   <Callout
                                                                         className={"w-full"}
-                                                                        title={error ? (`${error}`) : form.formState.errors ? ("Por favor, preencha todos os campos obrigatórios.") : ""}
+                                                                        title={error}
                                                                         color={"red"}
                                                                   />
                                                             </AnimBottomToTop>
@@ -185,14 +170,21 @@ export const CategoryRegisterForm = ({ isOpen, onClose, }: CategoryFormProps) =>
                                                             </Flex>
                                                       </Flex>
                                                 ) : (
-                                                      <Button
-                                                            className="w-full"
-                                                            type={"submit"}
-                                                            disabled={isPending}
-                                                      >
-                                                            Salvar Registro
-                                                      </Button>
-
+                                                      <Flex className="justify-start space-x-2">
+                                                            <Button
+                                                                  type={"submit"}
+                                                                  disabled={isPending}
+                                                            >
+                                                                  Salvar Registro
+                                                            </Button>
+                                                            <Button
+                                                                  type={"button"}
+                                                                  variant="secondary"
+                                                                  onClick={onClose}
+                                                            >
+                                                                  Cancelar
+                                                            </Button>
+                                                      </Flex>
                                                 )}
                                           </Flex>
                                     </form>

@@ -1,15 +1,16 @@
 "use client";
 
-import { Button, Flex, SelectItem, } from '@tremor/react'
-import { useState } from 'react'
-import { SearchWithSelect } from '../searches/SearchWithSelect'
-import { BsFillPlusCircleFill } from 'react-icons/bs'
-import { useCategoryData } from '@/hooks/use-category-data';
-import { CategoryEditForm } from '../forms/CategoryEditform';
-import { DeleteModal } from '../modals/DeleteModal';
-import { CategoryRegisterForm } from '../forms/CategoryRegisterform';
-import { deleteCategory } from '@/database/delete/delete-category';
-import { CategoryTable } from '../tables/CategoryTable';
+import { useState } from "react";
+import { BsFillPlusCircleFill, BsLayers } from "react-icons/bs";
+import { Button, Callout, Card, Divider, Flex, SelectItem, Title, } from "@tremor/react";
+import { AnimBottomToTop } from '@/components/animations/AnimBottomToTop';
+import { SearchWithSelect } from "@/components/searches/SearchWithSelect";
+import { CategoryEditForm } from "@/components/forms/CategoryEditform";
+import { DeleteModal } from "@/components/modals/DeleteModal";
+import { CategoryRegisterForm } from "@/components/forms/CategoryRegisterform";
+import { CategoryTable } from "@/components/tables/CategoryTable";
+import { useCategoryData } from "@/hooks/use-category-data";
+import { deleteCategory } from "@/actions/delete/delete-category";
 
 export const CategorySection = () => {
       const [isRegisterCategoryFormModalOpen, setIsRegisterCategoryFormModalOpen] = useState<boolean>(false);
@@ -24,37 +25,51 @@ export const CategorySection = () => {
       const handleOpenCategoryDetailsModal = async (id: string) => {
             setSelectedCategoryId(id);
             setIsEditCategoryFormModalOpen(true);
-      }
+      };
 
       const handleOpenCategoryDeleteModal = async (id: string) => {
             setSelectedCategoryId(id);
             setIsDeleteCategoryModalOpen(true);
-      }
+      };
 
       return (
-            <Flex className="flex-col space-y-4 items-start mt-4">
-                  <SearchWithSelect
-                        inputLabel="Pesquise por nome"
-                        selectLabel="Selecione por categoria"
-                        onSearch={() => { }}
-                  >
-                        <SelectItem value="">Todas</SelectItem>
-                        {categories.length > 0
-                              && categories.map(category => (
-                                    <SelectItem
-                                          key={category.id}
-                                          value={category.name}
-                                    >
-                                          {category.name}
-                                    </SelectItem>
-                              ))}
-                  </SearchWithSelect>
+            <Flex className="mainContainer">
+                  <Title className='flex space-x-2 items-center'>
+                        <BsLayers />
+                        <span>Categorias</span>
+                  </Title>
+                  <Divider />
+                  {categories.length > 0 ? (
+                        <>
+                              <SearchWithSelect
+                                    inputLabel="Pesquise por nome"
+                                    selectLabel="Selecione por categoria"
+                                    onSearch={() => { }}
+                              >
+                                    <SelectItem value="">Todas</SelectItem>
+                                    {categories.map(category => (
+                                          <SelectItem
+                                                key={category.id}
+                                                value={category.name}
+                                          >
+                                                {category.name}
+                                          </SelectItem>
+                                    ))}
+                              </SearchWithSelect>
 
-                  <CategoryTable
-                        categories={categories}
-                        handleOpenDetailsModal={handleOpenCategoryDetailsModal}
-                        handleOpenDeleteModal={handleOpenCategoryDeleteModal}
-                  />
+                              <CategoryTable
+                                    categories={categories}
+                                    handleOpenDetailsModal={handleOpenCategoryDetailsModal}
+                                    handleOpenDeleteModal={handleOpenCategoryDeleteModal}
+                              />
+                        </>
+                  ) : (
+                        <AnimBottomToTop>
+                              <Card className="p-2">
+                                    <Callout title="Não existem categorias no momento." className="w-full" />
+                              </Card>
+                        </AnimBottomToTop>
+                  )}
 
                   <Button onClick={() => setIsRegisterCategoryFormModalOpen(true)}>
                         <div className="flex items-center space-x-2">

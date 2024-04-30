@@ -4,17 +4,14 @@ import React, { ChangeEvent, useState } from "react";
 import { BsSearch } from "react-icons/bs";
 import { Flex, TextInput, Select } from "@tremor/react";
 
-export const SearchWithSelect = React.memo(function SearchWithSelect({
-      inputLabel,
-      selectLabel,
-      onSearch,
-      children,
-}: {
+interface SearchWithSelectProps {
       inputLabel: string;
       selectLabel: string;
       onSearch: (term: string, status: string) => void;
       children: React.ReactNode;
-}) {
+}
+
+export const SearchWithSelect = React.memo(function SearchWithSelect({ inputLabel, selectLabel, onSearch, children }: SearchWithSelectProps) {
       const [searchTerm, setSearchTerm] = useState<string>("");
       const [selectedStatus, setSelectedStatus] = useState<string>("");
 
@@ -34,7 +31,7 @@ export const SearchWithSelect = React.memo(function SearchWithSelect({
                   style={{ gap: "20px", width: "100%", maxWidth: "800px" }}
             >
                   <Flex className="flex-col justify-start items-start space-y-1">
-                        <h3 className="ml-1 text-tremor-default"> {inputLabel} </h3>
+                        <h3 className="ml-1 text-tremor-default font-medium"> {inputLabel} </h3>
                         <TextInput
                               className="border-slate-300"
                               type="text"
@@ -47,9 +44,8 @@ export const SearchWithSelect = React.memo(function SearchWithSelect({
                               }
                         />
                   </Flex>
-
                   <Flex className="flex-col justify-start items-start space-y-1">
-                        <h3 className="ml-1 text-tremor-default"> {selectLabel} </h3>
+                        <h3 className="ml-1 text-tremor-default font-medium"> {selectLabel} </h3>
                         <Select
                               className="border border-slate-300 rounded-tremor-default"
                               name={"select"}

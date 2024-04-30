@@ -7,7 +7,7 @@ import Github from "next-auth/providers/github";
 
 import { LoginSchema } from "@/schemas";
 
-import { getUserByEmail } from "@/database/read/get-users";
+import { getUserByEmail } from "@/actions/read/get-users";
 
 export default {
       providers: [

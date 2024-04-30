@@ -3,6 +3,7 @@
 import * as z from "zod";
 import { db } from "@/libs/db";
 import { OrderSchema } from "@/schemas";
+import { getOrderByName } from "../read/get-orders";
 const stripe = require("stripe")(process.env.STRIPE_SK);
 
 export const registerOrder = async (values: z.infer<typeof OrderSchema>) => {
@@ -12,29 +13,18 @@ export const registerOrder = async (values: z.infer<typeof OrderSchema>) => {
 
       const { name, email, city, cep, street, phone, cartProducts } = validatedFields.data;
 
-      if (!Array.isArray(cartProducts) || !cartProducts.every(id => typeof id === "string")) {
-            return { error: "cartProducts deve ser um array de strings." };
-      }
+      if (!Array.isArray(cartProducts) || !cartProducts.every(id => typeof id === "string")) return { error: "O carrinho de produtos deve ser um array de strings." };
 
       const uniqueIds = [...new Set(cartProducts)];
 
       const products = await db.product.findMany({
-            where: {
-                  id: {
-                        in: uniqueIds,
-                  },
-            },
+            where: { id: { in: uniqueIds } },
       });
 
-      if (!products.length) {
-            return { error: "Produtos não encontrados" }
-      }
+      if (!products.length) return { error: "Dados inexistentes." };
 
       let line_items: any[] = [];
-
-      function formatPrice(priceStr: string) {
-            return parseFloat(priceStr.replace(/[^0-9,.]/g, "").replace(",", "."));
-      }
+      const formatPrice = (priceStr: string) => parseFloat(priceStr.replace(/[^0-9,.]/g, "").replace(",", "."));
 
       for (const product of products) {
             const quantity = cartProducts.filter((id: string) => id === product.id.toString()).length;

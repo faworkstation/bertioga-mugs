@@ -1,7 +1,7 @@
 "use client";
 
 import { signIn } from "next-auth/react";
-import { FcGoogle } from "react-icons/fc"
+import { FcGoogle } from "react-icons/fc";
 import { Button } from "@tremor/react";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 

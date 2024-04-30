@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllCategories } from "@/database/read/get-categories";
+import { getAllCategories } from "@/actions/read/get-categories";
+
+interface CategoryProps {
+      id: string,
+      name: string,
+      parent: string | null
+};
 
 export const useCategoryData = () => {
-      const [categories, setCategories] = useState<{
-            id: string,
-            name: string,
-            parent: string | null
-      }[]>([]);
+      const [categories, setCategories] = useState<CategoryProps[]>([]);
 
       useEffect(() => {
             const fetchCategories = async () => {
@@ -20,6 +22,7 @@ export const useCategoryData = () => {
             };
 
             fetchCategories();
+
       }, [categories]);
 
       return { categories };

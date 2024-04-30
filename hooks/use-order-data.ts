@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Order } from "@prisma/client";
-import { getAllOrders, getOrderById } from "@/database/read/get-orders";
+import { getAllOrders, getOrderById } from "@/actions/read/get-orders";
 
 export const useOrderData = () => {
       const [orders, setOrders] = useState<Order[] | []>([]);

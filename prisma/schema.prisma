@@ -80,7 +80,7 @@ model Category {
 }
 
 model Order {
-  id         Int     @id @default(autoincrement())
+  id         String  @id @default(uuid())
   line_items Json
   name       String
   email      String
@@ -90,9 +90,9 @@ model Order {
   phone      String
   paid       Boolean
 
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
-    
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

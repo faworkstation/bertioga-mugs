@@ -5,26 +5,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState, useTransition } from "react"
 import { BsFillLayersFill, BsXCircle } from "react-icons/bs";
-
 import { CategorySchema } from "@/schemas";
-
-import {
-      Button,
-      Callout,
-      Card,
-      Divider,
-      Flex,
-      Select,
-      SelectItem,
-      TextInput,
-} from "@tremor/react";
-
+import { Button, Callout, Card, Divider, Flex, Select, SelectItem, TextInput, } from "@tremor/react";
 import { AnimBottomToTop } from "@/components/animations/AnimBottomToTop"
 import { HeaderForm } from "@/components/forms/HeaderForm";
 import { SyncLoading } from "@/components/loadings/SyncLoading"
-
 import { useCategoryData } from "@/hooks/use-category-data";
-import { updateCategory } from "@/database/update/update-category";
+import { updateCategory } from "@/actions/update/update-category";
 
 interface CategoryEditFormProps {
       isOpen: boolean;
@@ -91,12 +78,10 @@ export const CategoryEditForm = ({ isOpen, category, onClose, }: CategoryEditFor
                               <Card className={"cardForm"}>
                                     <HeaderForm
                                           icon={BsFillLayersFill}
-                                          title={"Registro de Categoria"}
-                                          description={!success ? ("Preencha o formulário abaixo para registrar uma categoria") : ("")}
+                                          title={"Editar Categoria"}
+                                          description={!success ? ("Altere as informações do formulário abaixo para editar uma categoria") : ("")}
                                     />
-
-                                    <Divider className="mt-2" style={{ marginBlock: "10px" }} />
-
+                                    <Divider />
                                     <form
                                           className={"w-full flex flex-col items-center justify-center"}
                                           onSubmit={form.handleSubmit(onSubmit)}
@@ -143,7 +128,7 @@ export const CategoryEditForm = ({ isOpen, category, onClose, }: CategoryEditFor
                                                 </Flex>
                                           )}
 
-                                          {!success && <Divider className="mt-2" style={{ marginBlock: "10px" }} />}
+                                          {!success && <Divider />}
 
                                           <Flex flexDirection="col" >
                                                 {isPending && !success ? (
@@ -177,32 +162,30 @@ export const CategoryEditForm = ({ isOpen, category, onClose, }: CategoryEditFor
                                                                         color={"teal"}
                                                                   />
                                                             </AnimBottomToTop>
-                                                            <Flex className="justify-start space-x-2">
-                                                                  <Button
-                                                                        type={"button"}
-                                                                        onClick={() => {
-                                                                              setSuccess("")
-                                                                        }}
-                                                                  >
-                                                                        Registrar Nova Categoria
-                                                                  </Button>
-                                                                  <Button
-                                                                        type={"button"}
-                                                                        variant="secondary"
-                                                                        onClick={onClose}
-                                                                  >
-                                                                        Fechar
-                                                                  </Button>
-                                                            </Flex>
+                                                            <Button
+                                                                  className="w-full"
+                                                                  type={"button"}
+                                                                  onClick={onClose}
+                                                            >
+                                                                  OK
+                                                            </Button>
                                                       </Flex>
                                                 ) : (
-                                                      <Button
-                                                            className="w-full"
-                                                            type={"submit"}
-                                                            disabled={isPending}
-                                                      >
-                                                            Salvar Registro
-                                                      </Button>
+                                                      <Flex className="justify-start space-x-2">
+                                                            <Button
+                                                                  type={"submit"}
+                                                                  disabled={isPending}
+                                                            >
+                                                                  Salvar Registro
+                                                            </Button>
+                                                            <Button
+                                                                  type={"button"}
+                                                                  variant="secondary"
+                                                                  onClick={onClose}
+                                                            >
+                                                                  Cancelar
+                                                            </Button>
+                                                      </Flex>
                                                 )}
                                           </Flex>
                                     </form>

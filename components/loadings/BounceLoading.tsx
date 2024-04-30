@@ -2,6 +2,6 @@ import { BounceLoader } from "react-spinners";
 
 export const BounceLoading = () => {
       return (
-            <BounceLoader color={"#1E3A84"} speedMultiplier={2} />
+            <BounceLoader color={"#3B82F6"} speedMultiplier={2} />
       );
-}
+};

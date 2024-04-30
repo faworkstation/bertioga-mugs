@@ -4,8 +4,8 @@ import * as z from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "@/libs/db";
 import { NewPasswordSchema } from "@/schemas";
-import { getPasswordResetTokenByToken } from "@/database/read/get-tokens";
-import { getUserByEmail } from "@/database/read/get-users";
+import { getPasswordResetTokenByToken } from "@/actions/read/get-tokens";
+import { getUserByEmail } from "@/actions/read/get-users";
 
 export const handleResetPassword = async (values: z.infer<typeof NewPasswordSchema>, token?: string | null,) => {
       if (!token) return { error: "Token inexistente" };

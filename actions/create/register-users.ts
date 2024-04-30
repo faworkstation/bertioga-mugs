@@ -1,15 +1,15 @@
-"use server"
+"use server";
 
 import * as z from "zod";
 import bcrypt from "bcryptjs";
 import { db } from "@/libs/db";
 import { sendVerificationEmail } from "@/libs/mail";
 import { UserRegisterSchema } from "@/schemas";
-import { getUserByEmail } from "@/database/read/get-users";
-import { generateVerificationToken } from "@/database/create/generate-tokens";
+import { getUserByEmail } from "@/actions/read/get-users";
+import { generateVerificationToken } from "@/actions/create/generate-tokens";
 
 export const registerUser = async (values: z.infer<typeof UserRegisterSchema>) => {
-      const validatedFields = UserRegisterSchema.safeParse(values)
+      const validatedFields = UserRegisterSchema.safeParse(values);
 
       if (!validatedFields.success) return { error: "Campos inválidos ou inexistentes. Por favor, insira campos válidos" };
 
@@ -37,10 +37,7 @@ export const registerUser = async (values: z.infer<typeof UserRegisterSchema>) =
 
       const verificationToken = await generateVerificationToken(email);
 
-      await sendVerificationEmail(
-            verificationToken.email,
-            verificationToken.token,
-      );
+      await sendVerificationEmail(verificationToken.email, verificationToken.token,);
 
       return { success: "Um email de confirmação de conta foi enviado. Por favor, verifique sua caixa de entrada para concluir seu cadastro." };
 };

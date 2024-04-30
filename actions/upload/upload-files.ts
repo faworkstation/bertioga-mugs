@@ -12,7 +12,7 @@ const bucketName = process.env.AWS_BUCKET_NAME;
 
 if (!region || !accessKeyId || !secretAccessKey || !bucketName) {
       throw new Error("As variáveis de ambiente da AWS não estão definidas corretamente.");
-}
+};
 
 const s3Client = new S3Client({
       region,
@@ -79,9 +79,9 @@ export async function uploadFiles(formData: FormData): Promise<string[]> {
 
             revalidatePath("/");
 
-            return uploadedFiles; // Retorna apenas a lista de links
+            return uploadedFiles;
       } catch (error) {
             console.error("Error during file upload:", error);
-            return []; // Em caso de erro, retorne uma lista vazia
-      }
-}
+            return [];
+      };
+};

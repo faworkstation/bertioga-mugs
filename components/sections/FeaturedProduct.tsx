@@ -2,7 +2,7 @@
 
 import React, { useContext } from 'react'
 import { Button, Card, Divider, Flex, Grid, Subtitle, Text, Title } from '@tremor/react'
-import { CartContext } from './CartContext';
+import { CartContext } from '../context/CartContext';
 import { useProductData } from '@/hooks/use-product-data';
 
 export const FeaturedProduct = () => {
@@ -17,8 +17,10 @@ export const FeaturedProduct = () => {
       const { products } = useProductData();
 
       return (
-            <Flex className='flex-col items-start space-y-4 p-4'>
-                  <Title>Produtos Novos</Title>
+            <Flex className="mainContainer">
+                  <Title className='flex space-x-2 items-center'>
+                        Produtos Novos
+                  </Title>
                   <Divider />
                   <Grid numItems={4} style={{ gap: '20px' }}>
                         {products?.length > 0 && products.map(product => (

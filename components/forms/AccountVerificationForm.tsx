@@ -6,7 +6,7 @@ import { BeatLoader } from "react-spinners";
 import { Button, Callout, Flex } from "@tremor/react";
 import { WrapperForm } from "@/components/forms/WrapperForm";
 import { LoadingPage } from "@/components/loadings/LoadingPage";
-import { newVerification } from "@/database/create/new-verification";
+import { newVerification } from "@/actions/create/new-verification";
 
 export const AccountVerificationForm = () => {
       const [error, setError] = useState<string | undefined>();

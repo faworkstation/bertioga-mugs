@@ -1,17 +1,6 @@
 import { BsPencilSquare, BsTrashFill } from "react-icons/bs";
 import { Product } from "@prisma/client";
-
-import {
-      Button,
-      Card,
-      Flex,
-      Table,
-      TableBody,
-      TableCell,
-      TableHead,
-      TableHeaderCell,
-      TableRow
-} from "@tremor/react";
+import { Button, Card, Flex, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 
 type StockTableProps = {
       products: Product[];
@@ -19,17 +8,9 @@ type StockTableProps = {
       handleOpenDeleteModal: (id: string) => void;
 };
 
-export const StockTable = ({
-      products,
-      handleOpenDeleteModal,
-      handleOpenDetailsModal
-}: StockTableProps) => {
+export const StockTable = ({ products, handleOpenDeleteModal, handleOpenDetailsModal }: StockTableProps) => {
       return (
-            <Flex
-                  className="flex-col items-start">
-                  <h2 className="sr-only">
-                        Lista de Produtos
-                  </h2>
+            <Flex className="flex-col items-start">
                   <Card className="mx-auto max-w-2xl p-2">
                         <Table>
                               <TableHead>
@@ -40,7 +21,6 @@ export const StockTable = ({
                                           <TableHeaderCell></TableHeaderCell>
                                     </TableRow>
                               </TableHead>
-
                               <TableBody>
                                     {products.length > 0 && (
                                           products.map(product => {

@@ -1,17 +1,5 @@
 import { BsPencilSquare, BsTrashFill } from "react-icons/bs";
-import { Category } from "@prisma/client";
-
-import {
-      Button,
-      Card,
-      Flex,
-      Table,
-      TableBody,
-      TableCell,
-      TableHead,
-      TableHeaderCell,
-      TableRow
-} from "@tremor/react";
+import { Button, Card, Flex, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 
 type CategoryTableProps = {
       categories: { id: string, name: string, parent: string | null }[];
@@ -22,9 +10,6 @@ type CategoryTableProps = {
 export const CategoryTable = ({ categories, handleOpenDetailsModal, handleOpenDeleteModal }: CategoryTableProps) => {
       return (
             <Flex className="flex-col items-start">
-                  <h2 className="sr-only">
-                        Tabela de Categorias
-                  </h2>
                   <Card className="mx-auto max-w-2xl p-2">
                         <Table>
                               <TableHead>
@@ -34,7 +19,6 @@ export const CategoryTable = ({ categories, handleOpenDetailsModal, handleOpenDe
                                           <TableHeaderCell></TableHeaderCell>
                                     </TableRow>
                               </TableHead>
-
                               <TableBody>
                                     {categories.length > 0 && (
                                           categories.map(category => {

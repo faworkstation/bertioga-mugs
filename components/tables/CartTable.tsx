@@ -1,19 +1,6 @@
 import { BsFileMinus, BsFilePlus } from "react-icons/bs";
 import { Product } from "@prisma/client";
-
-import {
-      Button,
-      Card,
-      Divider,
-      Flex,
-      Table,
-      TableBody,
-      TableCell,
-      TableHead,
-      TableHeaderCell,
-      TableRow,
-      Title
-} from "@tremor/react";
+import { Button, Card, Divider, Flex, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Title } from "@tremor/react";
 
 interface CartTableProps {
       products: Product[];
@@ -22,22 +9,19 @@ interface CartTableProps {
       removeProduct: (productId: string) => void;
 };
 
-export const CartTable = ({
-      products,
-      cartProducts,
-      addProduct,
-      removeProduct
-}: CartTableProps) => {
+const formatValueToCurrentBRL = (value: number) => {
+      return new Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+      }).format(value);
+};
 
+export const CartTable = ({ products, cartProducts, addProduct, removeProduct, }: CartTableProps) => {
+      const formatPrice = (priceStr: string) => parseFloat(priceStr.replace(/[^0-9,.]/g, "").replace(",", "."));
       const moreThisProduct = (id: string) => addProduct(id);
-
       const lessThisProduct = (id: string) => removeProduct(id);
 
-      const formatPrice = (priceStr: string) => parseFloat(priceStr.replace(/[^0-9,.]/g, "").replace(",", "."));
-
-      const cartProductList = products.filter((product) =>
-            cartProducts.includes(product.id)
-      );
+      const cartProductList = products.filter((product) => cartProducts.includes(product.id));
 
       let total = 0;
 
@@ -70,7 +54,7 @@ export const CartTable = ({
                                                 </TableRow>
                                           </TableHead>
                                           <TableBody>
-                                                {cartProductList.map(product => (
+                                                {cartProductList.map((product) => (
                                                       <TableRow key={product.id} className=" text-slate-800">
                                                             <TableCell>
                                                                   <Flex className="justify-start space-x-4">
@@ -82,9 +66,7 @@ export const CartTable = ({
                                                                                     style={{ objectFit: "cover" }}
                                                                               />
                                                                         </div>
-                                                                        <p className="font-medium">
-                                                                              {product.name}
-                                                                        </p>
+                                                                        <p className="font-medium">{product.name}</p>
                                                                   </Flex>
                                                             </TableCell>
                                                             <TableCell>
@@ -108,7 +90,9 @@ export const CartTable = ({
                                                             </TableCell>
                                                             <TableCell>
                                                                   <p className="font-medium text-tremor-title">
-                                                                        R$ {cartProducts.filter((id: string) => id === product.id).length * formatPrice(product.price)}
+                                                                        {formatValueToCurrentBRL(
+                                                                              cartProducts.filter((id: string) => id === product.id).length * formatPrice(product.price)
+                                                                        )}
                                                                   </p>
                                                             </TableCell>
                                                       </TableRow>
@@ -119,10 +103,10 @@ export const CartTable = ({
                               <Divider />
                               <Flex className="justify-start">
                                     <TableCell>
-                                          <Title className="font-bold"> Total </Title>
+                                          <Title className="font-bold">Total</Title>
                                     </TableCell>
                                     <TableCell>
-                                          <Title className="font-bold"> R$ {total} </Title>
+                                          <Title className="font-bold">{formatValueToCurrentBRL(total)}</Title>
                                     </TableCell>
                               </Flex>
                         </>

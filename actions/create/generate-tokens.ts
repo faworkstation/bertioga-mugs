@@ -8,12 +8,12 @@ import {
       getPasswordResetTokenByEmail,
       getTwoFactorTokenByEmail,
       getVerificationTokenByEmail
-} from "@/database/read/get-tokens";
+} from "@/actions/read/get-tokens";
+
 
 export const generateTwoFactorToken = async (email: string) => {
       const token = crypto.randomInt(100_000, 1_000_000).toString();
       const expires = new Date(new Date().getTime() + 5 * 60 * 1000);
-
       const existingToken = await getTwoFactorTokenByEmail(email);
 
       if (existingToken) {
@@ -23,11 +23,7 @@ export const generateTwoFactorToken = async (email: string) => {
       };
 
       const twoFactorToken = await db.twoFactorToken.create({
-            data: {
-                  email,
-                  token,
-                  expires,
-            },
+            data: { email, token, expires }
       });
 
       return twoFactorToken;
@@ -36,7 +32,6 @@ export const generateTwoFactorToken = async (email: string) => {
 export const generatePasswordResetToken = async (email: string) => {
       const token = uuidv4();
       const expires = new Date(new Date().getTime() + 3600 * 1000);
-
       const existingToken = await getPasswordResetTokenByEmail(email);
 
       if (existingToken) {
@@ -46,11 +41,7 @@ export const generatePasswordResetToken = async (email: string) => {
       };
 
       const passwordResetToken = await db.passwordResetToken.create({
-            data: {
-                  email,
-                  token,
-                  expires
-            },
+            data: { email, token, expires },
       });
 
       return passwordResetToken;
@@ -59,7 +50,6 @@ export const generatePasswordResetToken = async (email: string) => {
 export const generateVerificationToken = async (email: string) => {
       const token = uuidv4();
       const expires = new Date(new Date().getTime() + 3600 * 1000);
-
       const existingToken = await getVerificationTokenByEmail(email);
 
       if (existingToken) {
@@ -69,11 +59,7 @@ export const generateVerificationToken = async (email: string) => {
       };
 
       const verficationToken = await db.verificationToken.create({
-            data: {
-                  email,
-                  token,
-                  expires,
-            },
+            data: { email, token, expires }
       });
 
       return verficationToken;

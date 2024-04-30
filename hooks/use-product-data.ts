@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Product } from "@prisma/client";
-import { getAllProducts, getProductById } from "@/database/read/get-products";
+import { getAllProducts, getProductById } from "@/actions/read/get-products";
 
 export const useProductData = () => {
       const [products, setProducts] = useState<Product[] | []>([]);

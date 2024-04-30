@@ -1,16 +1,20 @@
 "use client";
 
 import React, { Fragment, useState } from "react";
-import { BsList } from "react-icons/bs";
+import { useRouter } from "next/navigation";
+import { BsCart, BsBoxSeam, BsClipboardData, BsLayers, BsList, BsPerson, BsSearch, BsShop, BsArrowLeftSquare } from "react-icons/bs";
 import { Menu, Transition } from "@headlessui/react";
-import Link from "next/link";
-import { LogoutButton } from "./LogoutButton";
+import { Button, Text } from "@tremor/react";
+import { LogoutButton } from "@/components/buttons/LogoutButton";
 
 export const MenuButton = () => {
-      const [isOpen, setIsOpen] = useState(false);
+      const [isOpen, setIsOpen] = useState<boolean>(false);
 
-      const closeMenu = () => {
+      const router = useRouter();
+
+      const closeMenu = (pageUrl: string) => {
             setIsOpen(false);
+            router.push(pageUrl);
       };
 
       return (
@@ -34,48 +38,109 @@ export const MenuButton = () => {
                         leaveTo="transform opacity-0 scale-95"
                   >
                         <Menu.Items
-                              style={{ width: "200px" }}
-                              className="absolute -left-1 mt-4 origin-top-left divide-y divide-gray-100 rounded-tremor-default shadow-lg border-2 focus:outline-none flex flex-col bg-slate-50 z-20"
+                              style={{ width: "300px" }}
+                              className="absolute -left-1 mt-4 origin-top-left divide-y divide-gray-100 rounded-tremor-default shadow-lg border-2 focus:outline-none flex flex-col items-start space-y-4 bg-slate-50 z-20"
                         >
-                              <Link href={"/"} className="p-4 flex items-center space-x-2" onClick={closeMenu}>
+                              <Button
+                                    className="ml-1 p-4 w-full items-center justify-start"
+                                    size={"lg"}
+                                    icon={BsShop}
+                                    type="button"
+                                    variant="light"
+                                    onClick={() => closeMenu("/")}
+                              >
                                     <Menu.Item>
-                                          <span>Início</span>
+                                          <Text className="ml-2">Início</Text>
                                     </Menu.Item>
-                              </Link>
-                              <Link href={"/search"} className="p-4 flex items-center space-x-2" onClick={closeMenu}>
+                              </Button>
+                              <Button
+                                    className="ml-1 p-4 w-full items-center justify-start"
+                                    size={"lg"}
+                                    icon={BsCart}
+                                    type="button"
+                                    variant="light"
+                                    onClick={() => closeMenu("/cart")}
+                              >
                                     <Menu.Item>
-                                          <span>Pesquisar</span>
+                                          <Text className="ml-2">Carrinho</Text>
                                     </Menu.Item>
-                              </Link>
-                              <Link href={"/products"} className="p-4 flex items-center space-x-2" onClick={closeMenu}>
+                              </Button>
+                              <Button
+                                    className="ml-1 p-4 w-full items-center justify-start"
+                                    size={"lg"}
+                                    icon={BsSearch}
+                                    type="button"
+                                    variant="light"
+                                    onClick={() => closeMenu("/")}
+                              >
                                     <Menu.Item>
-                                          <span>Produtos</span>
+                                          <Text className="ml-2">Pesquisar</Text>
                                     </Menu.Item>
-                              </Link>
-                              <Link href={"/orders"} className="p-4 flex items-center space-x-2" onClick={closeMenu}>
+                              </Button>
+                              <Button
+                                    className="ml-1 p-4 w-full items-center justify-start"
+                                    size={"lg"}
+                                    icon={BsBoxSeam}
+                                    type="button"
+                                    variant="light"
+                                    onClick={() => closeMenu("/products/stock")}
+                              >
                                     <Menu.Item>
-                                          <span>Pedidos</span>
+                                          <Text className="ml-2">Estoque</Text>
                                     </Menu.Item>
-                              </Link>
-                              <Link href={"/account"} className="p-4 flex items-center space-x-2" onClick={closeMenu}>
+                              </Button>
+                              <Button
+                                    className="ml-1 p-4 w-full items-center justify-start"
+                                    size={"lg"}
+                                    icon={BsLayers}
+                                    type="button"
+                                    variant="light"
+                                    onClick={() => closeMenu("/category")}
+                              >
                                     <Menu.Item>
-                                          <span>Conta</span>
+                                          <Text className="ml-2">Categorias</Text>
                                     </Menu.Item>
-                              </Link>
-                              <Link href={"/cart"} className="p-4 flex items-center space-x-2" onClick={closeMenu}>
+                              </Button>
+                              <Button
+                                    className="ml-1 p-4 w-full items-center justify-start"
+                                    size={"lg"}
+                                    icon={BsClipboardData}
+                                    type="button"
+                                    variant="light"
+                                    onClick={() => closeMenu("/orders")}
+                              >
                                     <Menu.Item>
-                                          <span>Carrinho</span>
+                                          <Text className="ml-2">Pedidos</Text>
                                     </Menu.Item>
-                              </Link>
+                              </Button>
+                              <Button
+                                    className="ml-1 p-4 w-full items-center justify-start"
+                                    size={"lg"}
+                                    icon={BsPerson}
+                                    type="button"
+                                    variant="light"
+                                    onClick={() => closeMenu("/account")}
+                              >
+                                    <Menu.Item>
+                                          <Text className="ml-2">Conta</Text>
+                                    </Menu.Item>
+                              </Button>
                               <LogoutButton>
-                                    <button className="p-4 flex items-center space-x-2" onClick={closeMenu}>
+                                    <Button
+                                          className="ml-1 p-4 w-full items-center justify-start"
+                                          size={"lg"}
+                                          icon={BsArrowLeftSquare}
+                                          type="button"
+                                          variant="light"
+                                          onClick={() => closeMenu("/")}
+                                    >
                                           <Menu.Item>
-                                                <span>Sair</span>
+                                                <Text className="ml-2">Sair</Text>
                                           </Menu.Item>
-                                    </button>
+                                    </Button>
                               </LogoutButton>
                         </Menu.Items>
                   </Transition>
-            </Menu>
+            </Menu >
       );
 };

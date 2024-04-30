@@ -15,6 +15,14 @@
   @apply bg-slate-400 rounded-full
 }
 
+.mainContainer {
+  align-items: start;
+  flex-direction: column;
+  padding-inline: 100px;
+  margin-top: 25px;
+  @apply transition-all duration-300 space-y-4;
+}
+
 .modal {
   height: 100vh;
   padding-inline: 10px;
@@ -56,9 +64,21 @@
   padding: 15px;
 }
 
+@media only screen and (max-width: 768px) {
+  .mainContainer {
+    padding: 20px;
+    margin-top: 15px;
+  }
+}
+
 @media only screen and (max-width: 600px) {
   .cardForm {
     width: 500px;
+  }
+
+  .mainContainer {
+    padding: 10px;
+    margin-top: 10px;
   }
 }
 

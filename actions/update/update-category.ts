@@ -6,7 +6,7 @@ import { UserRole } from "@prisma/client";
 import { CategorySchema } from "@/schemas";
 
 import { currentUser } from "@/hooks/use-server-side-user";
-import { getCategoryByName } from "../read/get-categories";
+import { getCategoryByName } from "@/actions/read/get-categories";
 
 export const updateCategory = async (values: z.infer<typeof CategorySchema>, categoryId: string) => {
       const validatedFields = CategorySchema.safeParse(values);
@@ -17,9 +17,7 @@ export const updateCategory = async (values: z.infer<typeof CategorySchema>, cat
 
       const existingCategoryName = await getCategoryByName(name);
 
-      if (existingCategoryName && existingCategoryName.id !== categoryId) {
-            return { error: `Já existe uma categoria registrada com este nome. Por favor, tente um nome diferente.` };
-      }
+      if (existingCategoryName && existingCategoryName.id !== categoryId) return { error: `Já existe uma categoria registrada com este nome. Por favor, tente um nome diferente.` };
 
       const user = await currentUser();
 
@@ -33,7 +31,7 @@ export const updateCategory = async (values: z.infer<typeof CategorySchema>, cat
                   },
             });
 
-            return { success: `Categoria Atualizada com Sucesso.`, };
+            return { success: `Categoria Editada com Sucesso.`, };
       } else {
             return { error: `Você não tem permissão para executar esta ação!` };
       };

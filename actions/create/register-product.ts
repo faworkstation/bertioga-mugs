@@ -4,9 +4,8 @@ import * as z from "zod";
 import { db } from "@/libs/db";
 import { UserRole } from "@prisma/client";
 import { ProductSchema } from "@/schemas";
-
 import { currentUser } from "@/hooks/use-server-side-user";
-import { getProductByName } from "../read/get-products";
+import { getProductByName } from "@/actions/read/get-products";
 
 export const registerProduct = async (values: z.infer<typeof ProductSchema>) => {
       const validatedFields = ProductSchema.safeParse(values);
@@ -17,9 +16,7 @@ export const registerProduct = async (values: z.infer<typeof ProductSchema>) => 
 
       const existingProductName = await getProductByName(name);
 
-      if (existingProductName) {
-            return { error: `Já existe um produto cadastrado com este nome. Por favor, tente um nome diferente.` };
-      }
+      if (existingProductName) return { error: `Já existe um produto cadastrado com este nome. Por favor, tente um nome diferente.` };
 
       const user = await currentUser();
 

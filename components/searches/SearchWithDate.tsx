@@ -5,15 +5,13 @@ import { BsSearch } from 'react-icons/bs';
 import { Flex, TextInput, DatePicker } from '@tremor/react';
 import { ptBR } from 'date-fns/locale';
 
-export const SearchWithDate = React.memo(function SearchWithDate({
-      disabled,
-      onSearch,
-      placeholderText,
-}: {
+interface SearchWithDateProps {
       disabled?: boolean;
       placeholderText: string;
       onSearch: (term: string, date: string | null) => void;
-}) {
+}
+
+export const SearchWithDate = React.memo(function SearchWithDate({ disabled, onSearch, placeholderText, }: SearchWithDateProps) {
       const [searchTerm, setSearchTerm] = useState<string>('');
       const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 

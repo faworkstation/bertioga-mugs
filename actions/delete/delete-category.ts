@@ -2,13 +2,10 @@
 
 import { db } from "@/libs/db";
 
-export const deleteProduct = async (productId: string): Promise<{
-      success: string,
-      error: string
-}> => {
+export const deleteCategory = async (categoryId: string): Promise<{ success: string, error: string }> => {
       try {
-            const response = await db.product.delete({
-                  where: { id: productId },
+            const response = await db.category.delete({
+                  where: { id: categoryId },
             });
 
             if (!response) {
@@ -19,15 +16,15 @@ export const deleteProduct = async (productId: string): Promise<{
             };
 
             return {
-                  success: `Produto Excluído com Sucesso!`,
+                  success: `Categoria Excluída com Sucesso!`,
                   error: ""
             };
       } catch (error) {
-            console.error("Erro ao excluir a Produto:", error);
+            console.error("Ops! ocorreu um erro ao excluir a Categoria:", error);
 
             return {
                   success: "",
-                  error: "Erro ao excluir a Produto."
+                  error: "Ops! ocorreu um erro ao excluir a Categoria"
             };
       };
 };

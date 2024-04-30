@@ -5,32 +5,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useEffect, useState, useTransition } from "react"
 import { BsFillBoxSeamFill, BsTrash, BsTrashFill, BsUpload, BsXCircle } from "react-icons/bs";
-
+import Image from "next/image";
 import { ProductSchema } from "@/schemas";
 import { Product } from "@prisma/client";
-
-import Image from "next/image";
-
-import {
-      Button,
-      Callout,
-      Card,
-      Divider,
-      Flex,
-      Select,
-      SelectItem,
-      TextInput,
-      Textarea
-} from "@tremor/react";
-
+import { Button, Callout, Card, Divider, Flex, Select, SelectItem, TextInput, Textarea } from "@tremor/react";
 import { AnimBottomToTop } from "@/components/animations/AnimBottomToTop"
 import { BounceLoading } from "@/components/loadings/BounceLoading";
 import { HeaderForm } from "@/components/forms/HeaderForm";
 import { SyncLoading } from "@/components/loadings/SyncLoading"
-
 import { useCategoryData } from "@/hooks/use-category-data";
 import useUploadedFiles from "@/hooks/use-uploaded-files";
-import { updateProduct } from "@/database/update/update-product";
+import { updateProduct } from "@/actions/update/update-product";
 
 interface PropsOfProperties {
       name: string;
@@ -41,12 +26,10 @@ interface ProductEditFormProps {
       isOpen: boolean;
       product: Product;
       onClose: () => void;
-}
+};
 
 const convertToPropsOfProperties = (json: any): PropsOfProperties[] => {
-      if (!Array.isArray(json)) {
-            return [];
-      };
+      if (!Array.isArray(json)) return [];
 
       return json.map((item) => {
             if (typeof item === 'object' && item !== null && 'name' in item && 'values' in item && Array.isArray(item.values)) {
@@ -78,11 +61,7 @@ const getInitialData = (product: Product) => {
       };
 };
 
-export const ProductEditForm = ({
-      isOpen,
-      product,
-      onClose,
-}: ProductEditFormProps) => {
+export const ProductEditForm = ({ isOpen, product, onClose, }: ProductEditFormProps) => {
       // Dados inicias do formulário de edição.
       const initialData = getInitialData(product);
 
@@ -222,9 +201,7 @@ export const ProductEditForm = ({
                                           title={"Editar Produto"}
                                           description={!success ? ("Altere as informações do formulário abaixo para editar um produto") : ("")}
                                     />
-
-                                    <Divider className="mt-2" style={{ marginBlock: "10px" }} />
-
+                                    <Divider />
                                     <form
                                           className={"w-full flex flex-col items-center justify-center"}
                                           onSubmit={form.handleSubmit(onSubmit)}
@@ -254,6 +231,7 @@ export const ProductEditForm = ({
                                                                   defaultValue={initialData.name}
                                                             />
                                                       </div>
+
                                                       <div className="w-full space-y-1">
                                                             <h3 className="text-tremor-label font-bold text-slate-800 ml-1">Selecione uma Categoria</h3>
                                                             <Select
@@ -304,7 +282,6 @@ export const ProductEditForm = ({
                                                                                     size={"xs"}
                                                                                     onClick={() => removeFile(index)}
                                                                               />
-
                                                                               <Image
                                                                                     src={`${link}`}
                                                                                     alt={`Uploaded image ${index + 1}`}
@@ -402,7 +379,7 @@ export const ProductEditForm = ({
                                                 </Flex>
                                           )}
 
-                                          {!success && <Divider className="mt-2" style={{ marginBlock: "10px" }} />}
+                                          {!success && <Divider />}
 
                                           <Flex flexDirection="col" >
                                                 {isPending && !success ? (
@@ -416,7 +393,6 @@ export const ProductEditForm = ({
                                                                         color={"red"}
                                                                   />
                                                             </AnimBottomToTop>
-
                                                             <Button
                                                                   className="w-full"
                                                                   type={"button"}
@@ -437,7 +413,6 @@ export const ProductEditForm = ({
                                                                         color={"red"}
                                                                   />
                                                             </AnimBottomToTop>
-
                                                             <Button
                                                                   className="w-full"
                                                                   type={"button"}
@@ -464,13 +439,20 @@ export const ProductEditForm = ({
                                                             </Button>
                                                       </Flex>
                                                 ) : (
-                                                      <Button
-                                                            className="w-full"
-                                                            type={"submit"}
-                                                            disabled={isUploadingFiles || isPending}
-                                                      >
-                                                            Salvar Edição
-                                                      </Button>
+                                                      <Flex className="w-full flex-col space-y-4">
+                                                            <Button
+                                                                  type={"submit"}
+                                                                  disabled={isUploadingFiles || isPending}
+                                                            >
+                                                                  Salvar Edição
+                                                            </Button>
+                                                            <Button
+                                                                  type={"button"}
+                                                                  onClick={onClose}
+                                                            >
+                                                                  Cancelar
+                                                            </Button>
+                                                      </Flex>
                                                 )}
                                           </Flex>
                                     </form>
