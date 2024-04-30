@@ -11,17 +11,11 @@ import { useProductData } from "@/hooks/use-product-data";
 
 export const CartSection = () => {
       const [isLoading, setIsLoading] = useState(true);
-      const [isSuccess, setIsSuccess] = useState(false);
 
       useEffect(() => {
             setTimeout(() => {
                   setIsLoading(false);
             }, 1500);
-
-            if (window?.location.href.includes("success")) {
-                  setIsSuccess(true)
-                  clearCart();
-            }
       }, []);
 
       const cartContext = useContext(CartContext);
@@ -33,17 +27,6 @@ export const CartSection = () => {
       const { cartProducts, addProduct, removeProduct, clearCart } = cartContext;
 
       const { products } = useProductData();
-
-      if (isSuccess) {
-            <Flex className="w-full p-4">
-                  <AnimBottomToTop>
-                        <Callout
-                              className="w-full p-2"
-                              title="Seu pagamento foi aprovado. Nós lhe enviamos um email informativo sobre o envio do produto."
-                        />
-                  </AnimBottomToTop>
-            </Flex>
-      }
 
       if (isLoading) {
             return (
@@ -65,7 +48,10 @@ export const CartSection = () => {
                               addProduct={addProduct}
                               removeProduct={removeProduct}
                         />
-                        <OrderForm cartProducts={cartProducts} />
+                        <OrderForm
+                              cartProducts={cartProducts}
+                              clearCart={clearCart}
+                        />
                   </Flex>
             ) : (
                   <Flex className="w-full p-4">

@@ -12,9 +12,10 @@ import { OrderSchema } from "@/schemas";
 
 interface OrderFormProps {
       cartProducts: string[];
+      clearCart: () => void;
 };
 
-export const OrderForm = ({ cartProducts }: OrderFormProps) => {
+export const OrderForm = ({ cartProducts, clearCart }: OrderFormProps) => {
       const [success, setSuccess] = useState<string>("");
       const [error, setError] = useState<string>("");
       const [isPending, setIsPending] = useState<boolean>(false);
@@ -23,7 +24,7 @@ export const OrderForm = ({ cartProducts }: OrderFormProps) => {
 
       const form = useForm<z.infer<typeof OrderSchema>>({
             resolver: zodResolver(OrderSchema),
-            defaultValues: { cartProducts: [] },
+            defaultValues: { cartProducts: [], },
       });
 
       const onSubmit = (values: z.infer<typeof OrderSchema>) => {
@@ -41,6 +42,7 @@ export const OrderForm = ({ cartProducts }: OrderFormProps) => {
                                     setError(data.error);
                               } else if (data.url) {
                                     window.location = data.url;
+                                    clearCart();
                               }
                         })
                         .catch((error) => {

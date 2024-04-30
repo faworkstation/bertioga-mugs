@@ -20,7 +20,7 @@ export const useCategoryData = () => {
             };
 
             fetchCategories();
-      }, []);
+      }, [categories]);
 
       return { categories };
 };

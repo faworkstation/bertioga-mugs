@@ -455,25 +455,13 @@ export const ProductEditForm = ({
                                                                         color={"teal"}
                                                                   />
                                                             </AnimBottomToTop>
-
-                                                            <Flex className="justify-start space-x-2">
-                                                                  <Button
-                                                                        type={"button"}
-                                                                        onClick={() => {
-                                                                              setSuccess("")
-                                                                              setUploadedFiles([]);
-                                                                        }}
-                                                                  >
-                                                                        Cadastrar Novo Produto
-                                                                  </Button>
-                                                                  <Button
-                                                                        type={"button"}
-                                                                        variant="secondary"
-                                                                        onClick={onClose}
-                                                                  >
-                                                                        Fechar
-                                                                  </Button>
-                                                            </Flex>
+                                                            <Button
+                                                                  className="w-full"
+                                                                  type={"button"}
+                                                                  onClick={onClose}
+                                                            >
+                                                                  OK
+                                                            </Button>
                                                       </Flex>
                                                 ) : (
                                                       <Button
@@ -481,7 +469,7 @@ export const ProductEditForm = ({
                                                             type={"submit"}
                                                             disabled={isUploadingFiles || isPending}
                                                       >
-                                                            Salvar Cadastro
+                                                            Salvar Edição
                                                       </Button>
                                                 )}
                                           </Flex>

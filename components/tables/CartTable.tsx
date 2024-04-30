@@ -35,27 +35,29 @@ export const CartTable = ({
 
       const formatPrice = (priceStr: string) => parseFloat(priceStr.replace(/[^0-9,.]/g, "").replace(",", "."));
 
+      const cartProductList = products.filter((product) =>
+            cartProducts.includes(product.id)
+      );
+
       let total = 0;
 
-      for (const productId of cartProducts) {
-            const product = products.find(p => p.id === productId);
-            if (product) {
-                  const price = formatPrice(product.price);
-                  total += price;
-            };
-      };
+      cartProductList.forEach((product) => {
+            const price = formatPrice(product.price);
+            const quantity = cartProducts.filter((id) => id === product.id).length;
+            total += price * quantity;
+      });
 
       return (
             <Card>
                   <Title>Carrinho</Title>
                   <Divider />
-                  {products?.length > 0 && (
+                  {cartProductList?.length > 0 && (
                         <>
                               <Flex
                                     className={"flex-col overflow-auto pb-2 space-y-4 items-start"}
                                     style={{
                                           height: "auto",
-                                          maxHeight: "420px",
+                                          maxHeight: "388px",
                                           paddingInline: "5px"
                                     }}
                               >
@@ -68,7 +70,7 @@ export const CartTable = ({
                                                 </TableRow>
                                           </TableHead>
                                           <TableBody>
-                                                {products.map(product => (
+                                                {cartProductList.map(product => (
                                                       <TableRow key={product.id} className=" text-slate-800">
                                                             <TableCell>
                                                                   <Flex className="justify-start space-x-4">
@@ -114,6 +116,7 @@ export const CartTable = ({
                                           </TableBody>
                                     </Table>
                               </Flex>
+                              <Divider />
                               <Flex className="justify-start">
                                     <TableCell>
                                           <Title className="font-bold"> Total </Title>

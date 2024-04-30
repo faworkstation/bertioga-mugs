@@ -21,7 +21,7 @@ export const useProductData = () => {
 
       useEffect(() => {
             fetchAllProducts();
-      }, []);
+      }, [products]);
 
       return { products };
 };

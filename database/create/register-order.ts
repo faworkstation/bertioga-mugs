@@ -1,8 +1,8 @@
 "use server";
 
 import * as z from "zod";
-import { db } from "@/libs/db"; // Seu prisma client
-import { OrderSchema } from "@/schemas"; // Seu schema Zod para validação
+import { db } from "@/libs/db";
+import { OrderSchema } from "@/schemas";
 const stripe = require("stripe")(process.env.STRIPE_SK);
 
 export const registerOrder = async (values: z.infer<typeof OrderSchema>) => {
@@ -51,8 +51,8 @@ export const registerOrder = async (values: z.infer<typeof OrderSchema>) => {
                               unit_amount: formattedPrice * 100,
                         },
                   });
-            }
-      }
+            };
+      };
 
       const newOrder = await db.order.create({
             data: {
@@ -71,10 +71,10 @@ export const registerOrder = async (values: z.infer<typeof OrderSchema>) => {
             line_items,
             mode: "payment",
             customer_email: email,
-            success_url: process.env.PUBLIC_URL + "/sucesso",
-            cancel_url: process.env.PUBLIC_URL + "/cart?canceled=1",
+            success_url: process.env.NEXT_PUBLIC_APP_URL + "/success",
+            cancel_url: process.env.NEXT_PUBLIC_APP_URL + "/cart?canceled=1",
             metadata: { orderId: newOrder.id.toString() },
       });
 
       return { url: session.url }
-}
+};

@@ -82,5 +82,5 @@ export const OrderSchema = z.object({
       street: z.string().min(1, { message: "Este campo é obrigatório" }),
       phone: z.string().min(1, { message: "Este campo é obrigatório" }),
       cartProducts: z.array(z.string()), 
-      paid: z.boolean(),
+      paid: z.boolean().optional(),
 });

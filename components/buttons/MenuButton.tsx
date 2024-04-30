@@ -42,14 +42,19 @@ export const MenuButton = () => {
                                           <span>Início</span>
                                     </Menu.Item>
                               </Link>
+                              <Link href={"/search"} className="p-4 flex items-center space-x-2" onClick={closeMenu}>
+                                    <Menu.Item>
+                                          <span>Pesquisar</span>
+                                    </Menu.Item>
+                              </Link>
                               <Link href={"/products"} className="p-4 flex items-center space-x-2" onClick={closeMenu}>
                                     <Menu.Item>
                                           <span>Produtos</span>
                                     </Menu.Item>
                               </Link>
-                              <Link href={"/search"} className="p-4 flex items-center space-x-2" onClick={closeMenu}>
+                              <Link href={"/orders"} className="p-4 flex items-center space-x-2" onClick={closeMenu}>
                                     <Menu.Item>
-                                          <span>Pesquisar</span>
+                                          <span>Pedidos</span>
                                     </Menu.Item>
                               </Link>
                               <Link href={"/account"} className="p-4 flex items-center space-x-2" onClick={closeMenu}>

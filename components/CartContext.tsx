@@ -37,11 +37,28 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
 
       function removeProduct(productId: string) {
             setCartProducts((prev) => {
-                  const updatedCartProducts = prev.filter((item) => item !== productId);
-                  localStorage.setItem("cart", JSON.stringify(updatedCartProducts)); // Atualizar localStorage
+                  // Encontra o índice do primeiro produto a ser removido
+                  const index = prev.findIndex((item) => item === productId);
+
+                  if (index === -1) {
+                        // Se o produto não for encontrado, apenas retorne o array atual
+                        return prev;
+                  }
+
+                  // Cria uma cópia do array atual
+                  const updatedCartProducts = [...prev];
+
+                  // Remove o produto do índice encontrado
+                  updatedCartProducts.splice(index, 1);
+
+                  // Atualiza o localStorage
+                  localStorage.setItem("cart", JSON.stringify(updatedCartProducts));
+
+                  // Retorna os produtos atualizados
                   return updatedCartProducts;
             });
       }
+
 
       function clearCart() {
             setCartProducts([]);
